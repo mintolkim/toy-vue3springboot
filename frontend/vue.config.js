@@ -8,7 +8,7 @@ module.exports = {
   devServer: {
     port: 8082,
     proxy: {
-      '/example': {
+      '/v3': {
         target: 'http://localhost:8081',
         changeOrigin: true
       }
