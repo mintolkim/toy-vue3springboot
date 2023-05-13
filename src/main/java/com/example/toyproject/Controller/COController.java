@@ -7,9 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @Slf4j
-@RequestMapping("/v3")
+@RequestMapping("/")
 @RestController
 @Controller
 public class COController {

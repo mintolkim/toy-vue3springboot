@@ -6,9 +6,9 @@ module.exports = defineConfig({
 module.exports = {
   outputDir: "../src/main/resources/static",
   devServer: {
-    port: 8082,
+    port: 8083,
     proxy: {
-      '/v3': {
+      '/': {
         target: 'http://localhost:8081',
         changeOrigin: true
       }
