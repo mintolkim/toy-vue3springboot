@@ -19,7 +19,7 @@
     <div class="container">
         <div class="my-5 row row-cols-2 mt-20">
             <div class="col-3"><UserProfile :name="name"/></div>
-            <div class="col-9"><PostBlog/></div>
+            <div class="col-9 text-center"><PostBlog/></div>
         </div>
     </div>
 </template>
