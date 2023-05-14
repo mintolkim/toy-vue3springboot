@@ -1,26 +1,25 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <blog-main :name="name"/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import BlogMain from "@/components/blogMain.vue";
+import {ref} from "vue";
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+    components: {
+        BlogMain
+    },
+    setup () {
+        const name = ref('mintol');
+
+        return{
+            name
+        }
+    }
+
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

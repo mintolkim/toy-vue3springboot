@@ -11,7 +11,12 @@ module.exports = {
       '/': {
         target: 'http://localhost:8081',
         changeOrigin: true
-      }
+      },
+    },
+    client: {
+      overlay: true,
+      // 웹소켓 설정
+      webSocketURL: { hostname: undefined, pathname: undefined, port: '0' },
     }
   }
 };
