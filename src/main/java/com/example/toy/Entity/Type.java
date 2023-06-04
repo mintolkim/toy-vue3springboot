@@ -1,4 +1,4 @@
-package com.example.toyproject.Entity;
+package com.example.toy.Entity;
 
 public enum Type {
     ADMIN , USER
