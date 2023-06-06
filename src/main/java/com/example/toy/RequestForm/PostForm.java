@@ -1,11 +1,25 @@
 package com.example.toy.RequestForm;
 
+import com.example.toy.Entity.User;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class PostForm {
+    private Long id;
+
+    private String subject;
+
+    private String content;
+
+    private User user;
+
+    private LocalDateTime updateDate;
+
+    private LocalDateTime writeDate;
 
     public PostForm() {
     }

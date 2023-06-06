@@ -17,8 +17,4 @@ public class Date {
     public Date() {
     }
 
-    public Date(LocalDateTime updateDate, LocalDateTime writeDate) {
-        this.updateDate = updateDate;
-        this.writeDate = writeDate;
-    }
 }
