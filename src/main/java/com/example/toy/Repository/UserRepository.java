@@ -8,29 +8,34 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserRepository {
     private final EntityManager em;
 
     // 회원가입
-    public String join(UserForm userForm) {
-        if (isIdUnique(userForm)) {
-            try {
-                User user = createUserFromForm(userForm);
-                em.persist(user);
-                return "가입이 완료되었습니다.";
-            } catch (Exception e) {
-                return "가입에 실패하였습니다.";
-            }
-        } else {
-            return "아이디가 이미 사용 중입니다.";
+    @Transactional
+    public Map<String, String> join(UserForm userForm) {
+        Map<String,String> result = new HashMap<>();
+        try {
+            User user = createUserFromForm(userForm);
+            em.persist(user);
+            result.put("status", "200");
+            result.put("message", "회원가입이 완료되었습니다.");
+            return result;
+        } catch (Exception e) {
+            result.put("status", "500");
+            result.put("message", "회원가입에 실패하였습니다.");
+            return result;
         }
     }
 
+    // 로그인
     public String login(UserForm userForm) {
         if (checkPassword(userForm)){
             return "로그인에 성공하였습니다.";
@@ -39,11 +44,32 @@ public class UserRepository {
         }
     }
 
+    // 회원 탈퇴
+    @Transactional
+    public Map<String, String> deleteUser(UserForm userForm) {
+        Map<String, String> result = new HashMap<>();
+        try {
+            User user = em.find(User.class, userForm.getId());
+            if (user != null) {
+                em.remove(user);
+                em.flush();
+                em.clear();
+            }
+            result.put("status", "200");
+            result.put("message", "회원탈퇴가 정상적으로 되었습니다.");
+            return result;
+        } catch (Exception e){
+            result.put("status", "500");
+            result.put("message", "회원탈퇴에 실패했습니다.");
+            return result;
+        }
+    }
+
     // 아이디 중복체크
-    private boolean isIdUnique (UserForm userForm){
+    public boolean isIdUnique (UserForm userForm){
         List<User> username = em.createQuery("select u from User u where username = :username", User.class)
-                                    .setParameter("username", userForm.getUsername())
-                                    .getResultList();
+                .setParameter("username", userForm.getUsername())
+                .getResultList();
         return username.isEmpty();
     }
 
@@ -53,7 +79,6 @@ public class UserRepository {
                             .setParameter("username", userForm.getUsername())
                             .setParameter("password", userForm.getPassword())
                             .getResultList();
-
         return !user.isEmpty();
     }
 

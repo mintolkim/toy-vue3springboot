@@ -8,10 +8,8 @@ import lombok.Setter;
 @Setter
 public class UserForm {
     private Long id;
-
     private String username;
     private String password;
-
 
     private Type type;
 
