@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-@Controller@Slf4j
+@Slf4j
 @RestController
 @RequestMapping("api")
 @RequiredArgsConstructor
@@ -42,5 +42,6 @@ public class BlogController {
         return ResponseEntity.ok().body(result);
     }
 
+    // TODO : 메뉴 조회
 
 }
