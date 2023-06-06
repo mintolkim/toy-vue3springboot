@@ -18,6 +18,8 @@ public class Menu {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Embedded
-    private Date date;
+    public void setUser(User user){
+        this.user = user;
+        user.getMenuList().add(this);
+    }
 }

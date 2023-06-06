@@ -19,25 +19,28 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
+    // 회원 가입
     @PostMapping("join")
     public ResponseEntity<Map<String, String>> join(@RequestBody UserForm userForm){
         Map<String, String> result = userService.Join(userForm);
         return ResponseEntity.ok().body(result);
     }
 
+    // 로그인
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody UserForm userForm) {
-        String result = userService.login(userForm);
+    public ResponseEntity<Map<String, Object>> login(@RequestBody UserForm userForm) {
+        Map<String, Object> result = userService.login(userForm);
         return ResponseEntity.ok().body(result);
     }
 
+    // 아이디 중복 체크
     @PostMapping("idUnique")
     public ResponseEntity<String> idUnique(@RequestBody UserForm userForm) {
-        Boolean idUnique = userService.idUnique(userForm);
-        String result = idUnique ? "사용 가능한 아이디입니다." : "이미 사용중인 아이디입니다.";
+        String result = userService.idUnique(userForm);
         return ResponseEntity.ok().body(result);
     }
 
+    // 회원 탈퇴
     @PostMapping("deleteUser")
     public ResponseEntity<Map<String, String>> deleteUser(@RequestBody UserForm userForm) {
         Map<String,String> result = userService.deleteUser(userForm);

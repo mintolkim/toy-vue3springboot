@@ -20,48 +20,41 @@ public class UserRepository {
 
     // 회원가입
     @Transactional
-    public Map<String, String> join(UserForm userForm) {
-        Map<String,String> result = new HashMap<>();
+    public void join(UserForm userForm) {
         try {
             User user = createUserFromForm(userForm);
             em.persist(user);
-            result.put("status", "200");
-            result.put("message", "회원가입이 완료되었습니다.");
-            return result;
         } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "회원가입에 실패하였습니다.");
-            return result;
+            throw new RuntimeException("user join fail");
         }
     }
 
     // 로그인
-    public String login(UserForm userForm) {
-        if (checkPassword(userForm)){
-            return "로그인에 성공하였습니다.";
+    public Map<String, Object> login(UserForm userForm) {
+        Map<String, Object> result = new HashMap<>();
+        User user = checkPassword(userForm);
+
+        if (user != null){
+            result.put("status", "200");
+            result.put("message", "환영합니다. " + user.getUsername());
+            return result;
         } else {
-            return "존재하지 않는 아이디거나, 비밀번호가 잘못 되었습니다.";
+            throw new RuntimeException("login error");
         }
     }
 
     // 회원 탈퇴
     @Transactional
-    public Map<String, String> deleteUser(UserForm userForm) {
-        Map<String, String> result = new HashMap<>();
+    public void deleteUser(UserForm userForm) {
         try {
             User user = em.find(User.class, userForm.getId());
             if (user != null) {
                 em.remove(user);
-                em.flush();
-                em.clear();
+            } else {
+                throw new RuntimeException("user delete fail");
             }
-            result.put("status", "200");
-            result.put("message", "회원탈퇴가 정상적으로 되었습니다.");
-            return result;
         } catch (Exception e){
-            result.put("status", "500");
-            result.put("message", "회원탈퇴에 실패했습니다.");
-            return result;
+            throw new RuntimeException("user delete fail");
         }
     }
 
@@ -74,13 +67,19 @@ public class UserRepository {
     }
 
     // 비밀번호 체크
-    private boolean checkPassword (UserForm userForm){
-        List<User> user = em.createQuery("select u from User u where username = :username and password = :password")
-                            .setParameter("username", userForm.getUsername())
-                            .setParameter("password", userForm.getPassword())
-                            .getResultList();
-        return !user.isEmpty();
+    private User checkPassword(UserForm userForm) {
+        List<User> users = em.createQuery("select u from User u where username = :username and password = :password")
+                .setParameter("username", userForm.getUsername())
+                .setParameter("password", userForm.getPassword())
+                .getResultList();
+
+        if (!users.isEmpty()) {
+            return users.get(0);
+        } else {
+            return null;
+        }
     }
+
 
     // Entity 세팅
     private User createUserFromForm(UserForm userForm) {
