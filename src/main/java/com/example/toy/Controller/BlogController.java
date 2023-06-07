@@ -42,6 +42,10 @@ public class BlogController {
         return ResponseEntity.ok().body(result);
     }
 
-    // TODO : 메뉴 조회
-
+    // 메뉴 조회
+    @PostMapping("selectMenu")
+    public ResponseEntity<Map<String, Object>> selectMenu(@RequestBody UserForm userForm){
+        Map<String, Object> result = blogService.selectMenu(userForm);
+        return ResponseEntity.ok().body(result);
+    }
 }

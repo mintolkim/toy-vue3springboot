@@ -1,5 +1,6 @@
 package com.example.toy.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,5 +1,6 @@
 package com.example.toy.Service.blog;
 
+import com.example.toy.Entity.Menu;
 import com.example.toy.Entity.User;
 import com.example.toy.Repository.MenuRepository;
 import com.example.toy.RequestForm.MenuForm;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -67,6 +69,20 @@ public class BlogService {
         } catch (Exception e) {
             result.put("status", "500");
             result.put("message", "메뉴 수정에 실패했습니다.");
+        }
+        return result;
+    }
+
+    // 메뉴 조회
+    public Map<String, Object> selectMenu(UserForm userForm) {
+        Map<String, Object> result = new HashMap<>();
+        try{
+            List<MenuForm> MenuList = menuRepository.selectMenu(userForm);
+            result.put("status", "200");
+            result.put("result", MenuList);
+        } catch (Exception e) {
+            result.put("status", "500");
+            result.put("message", "메뉴 조회에 실패하였습니다.");
         }
         return result;
     }

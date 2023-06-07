@@ -26,7 +26,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-    //implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.5.13'
 }
 
 tasks.named('test') {

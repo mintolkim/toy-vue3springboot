@@ -9,9 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Repository
 @Transactional
@@ -37,18 +35,14 @@ public class MenuRepository {
 
     // 메뉴 삭제
     public void deleteMenu(MenuForm menuForm) {
-        try {
-            Menu menu = em.find(Menu.class, menuForm.getId());
-            if (menu != null) {
-                em.createQuery("delete from Menu m where id = :id ")
-                                .setParameter("id", menu.getId())
-                                .executeUpdate();
-                em.clear();
-            } else {
-                throw new RuntimeException("Menu not found");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Menu delete fail");
+        Menu menu = em.find(Menu.class, menuForm.getId());
+        if (menu != null) {
+            em.createQuery("delete from Menu m where id = :id ")
+                            .setParameter("id", menu.getId())
+                            .executeUpdate();
+            em.clear();
+        } else {
+            throw new RuntimeException("Menu not found");
         }
     }
 
@@ -61,7 +55,29 @@ public class MenuRepository {
 
     // 사용자 찾는 메서드
     public User findUser(UserForm userForm) {
+        if (userForm == null || userForm.getId() == null) {
+            throw new IllegalArgumentException("UserForm or UserForm ID must not be null");
+        }
+
         User user = em.find(User.class, userForm.getId());
         return user;
+    }
+
+
+    // 메뉴 조회
+    public List<MenuForm> selectMenu(UserForm userForm) {
+        User user = findUser(userForm);
+        List<Menu> menuList = user.getMenuList();
+
+        // MenuForm으로 변환
+        List<MenuForm> menuFormList = new ArrayList<>();
+        for (Menu menu : menuList) {
+            MenuForm menuForm = new MenuForm();
+            menuForm.setId(menu.getId());
+            menuForm.setMenuName(menu.getMenuName());
+            menuFormList.add(menuForm);
+        }
+
+        return menuFormList;
     }
 }
