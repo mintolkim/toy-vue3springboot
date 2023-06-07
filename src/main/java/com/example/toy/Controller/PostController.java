@@ -26,8 +26,8 @@ public class PostController {
 
     // 글 등록
     @PostMapping("write")
-    public ResponseEntity<Map<String, Object>> writePost(@RequestBody PostForm postForm){
-        Map<String, Object> result = postService.writePost(postForm);
+    public ResponseEntity<Map<String, Object>> writePost(@RequestBody PostForm postForm, UserForm userForm){
+        Map<String, Object> result = postService.writePost(postForm, userForm);
         return ResponseEntity.ok().body(result);
     }
 

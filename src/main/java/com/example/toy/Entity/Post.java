@@ -33,5 +33,10 @@ public class Post {
     @Embedded
     private Date date;
 
+    public void setUser(User user){
+        this.user = user;
+        user.getPostList().add(this);
+    }
+
 }
 

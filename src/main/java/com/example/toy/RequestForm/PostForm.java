@@ -15,8 +15,6 @@ public class PostForm {
 
     private String content;
 
-    private User user;
-
     private LocalDateTime updateDate;
 
     private LocalDateTime writeDate;

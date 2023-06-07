@@ -20,13 +20,11 @@ public class MenuRepository {
     // 메뉴 생성
     public void createMenu(MenuForm menuForm, UserForm userForm) throws Exception{
         Map<String, Object> result = new HashMap<>();
-
         User user = findUser(userForm);
         Menu menu = new Menu();
         menu.setMenuName(menuForm.getMenuName());
         menu.setUser(user);
         em.persist(menu);
-
     }
 
     // 메뉴 삭제

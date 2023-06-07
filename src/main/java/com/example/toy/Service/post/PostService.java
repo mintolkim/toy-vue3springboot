@@ -17,10 +17,10 @@ public class PostService {
     private final PostRepository postRepository;
 
     // 글 등록
-    public Map<String, Object> writePost(PostForm postForm) {
+    public Map<String, Object> writePost(PostForm postForm, UserForm userForm) {
         Map<String, Object> result = new HashMap<>();
         try {
-            postRepository.writePost(postForm);
+            postRepository.writePost(postForm, userForm);
             result.put("status", "200");
             result.put("message", "글 등록이 완료되었습니다.");
         } catch (Exception e) {

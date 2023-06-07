@@ -6,6 +6,7 @@ import com.example.toy.RequestForm.PostForm;
 import com.example.toy.RequestForm.UserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -13,19 +14,19 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional
 public class PostRepository {
     private final EntityManager em;
 
     // 글 등록
-    public void writePost(PostForm postForm) {
+    public void writePost(PostForm postForm, UserForm userForm) {
+        User user = findUser(userForm);
         Post post = new Post();
         post.setId(postForm.getId());
         post.setSubject(postForm.getSubject());
-        post.setContent(post.getContent());
-        // TODO : post.setUser();
+        post.setContent(postForm.getContent());
+        post.setUser(user);
         em.persist(post);
-
-
     }
 
     // 글 수정
