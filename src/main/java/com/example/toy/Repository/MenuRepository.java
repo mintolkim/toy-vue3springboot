@@ -18,19 +18,15 @@ public class MenuRepository {
     private final EntityManager em;
 
     // 메뉴 생성
-    public void createMenu(MenuForm menuForm, UserForm userForm) {
+    public void createMenu(MenuForm menuForm, UserForm userForm) throws Exception{
         Map<String, Object> result = new HashMap<>();
 
-        try {
-            User user = findUser(userForm);
-            Menu menu = new Menu();
-            menu.setMenuName(menuForm.getMenuName());
-            menu.setUser(user);
-            em.persist(menu);
+        User user = findUser(userForm);
+        Menu menu = new Menu();
+        menu.setMenuName(menuForm.getMenuName());
+        menu.setUser(user);
+        em.persist(menu);
 
-        } catch (Exception e) {
-            throw new RuntimeException("Menu create fail");
-        }
     }
 
     // 메뉴 삭제
@@ -58,7 +54,6 @@ public class MenuRepository {
         if (userForm == null || userForm.getId() == null) {
             throw new IllegalArgumentException("UserForm or UserForm ID must not be null");
         }
-
         User user = em.find(User.class, userForm.getId());
         return user;
     }
@@ -80,4 +75,6 @@ public class MenuRepository {
 
         return menuFormList;
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.example.toy.Controller;
 
 import com.example.toy.RequestForm.PostForm;
+import com.example.toy.RequestForm.UserForm;
 import com.example.toy.Service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +46,9 @@ public class PostController {
     }
 
     // 글 조회
-    @PostMapping("list")
-    public ResponseEntity<Map<String, Object>> listPost(@RequestBody PostForm postForm){
-        Map<String, Object> result = postService.listPost(postForm);
+    @PostMapping("getList")
+    public ResponseEntity<Map<String, Object>> getPostList(UserForm userForm, int pageNo){
+        Map<String, Object> result = postService.getPostList(userForm, pageNo);
         return ResponseEntity.ok().body(result);
     }
 
