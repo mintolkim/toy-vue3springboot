@@ -60,7 +60,8 @@ public class UserRepository {
 
     // 아이디 중복체크
     public boolean isIdUnique (UserForm userForm){
-        List<User> username = em.createQuery("select u from User u where username = :username", User.class)
+        String jpql = "select u from User u where username = :username";
+        List<User> username = em.createQuery(jpql, User.class)
                 .setParameter("username", userForm.getUsername())
                 .getResultList();
         return username.isEmpty();
@@ -68,7 +69,8 @@ public class UserRepository {
 
     // 비밀번호 체크
     private User checkPassword(UserForm userForm) {
-        List<User> users = em.createQuery("select u from User u where username = :username and password = :password")
+        String jpql = "select u from User u where username = :username and password = :password";
+        List<User> users = em.createQuery(jpql, User.class)
                 .setParameter("username", userForm.getUsername())
                 .setParameter("password", userForm.getPassword())
                 .getResultList();

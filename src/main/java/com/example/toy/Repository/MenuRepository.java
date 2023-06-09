@@ -31,7 +31,8 @@ public class MenuRepository {
     public void deleteMenu(MenuForm menuForm) {
         Menu menu = em.find(Menu.class, menuForm.getId());
         if (menu != null) {
-            em.createQuery("delete from Menu m where id = :id ")
+            String jpql = "delete from Menu m where id = :id ";
+            em.createQuery(jpql)
                             .setParameter("id", menu.getId())
                             .executeUpdate();
             em.clear();

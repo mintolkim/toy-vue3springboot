@@ -39,11 +39,7 @@ public class PostRepository {
 
     // 글 수정
     public void updatePost(PostForm postForm) {
-        if (postForm == null || postForm.getId() == null) {
-            throw new IllegalArgumentException("postForm is Null");
-        }
-
-        Post post = em.find(Post.class ,postForm.getId());
+        Post post = findPost(postForm);
         post.setSubject(postForm.getSubject());
         post.setContent(postForm.getContent());
 
@@ -58,6 +54,12 @@ public class PostRepository {
 
     // 글 삭제
     public void deletePost(PostForm postForm) {
+        Post post = findPost(postForm);
+        String jpql = "delete from Post p where p.id =: id";
+        em.createQuery(jpql)
+                .setParameter("id", post.getId())
+                .executeUpdate();
+        em.clear();
     }
 
     // 글 조회
@@ -65,7 +67,7 @@ public class PostRepository {
         User user = findUser(userForm);
         int pageSize = 10; // 한 페이지당 데이터 수
 
-        String jpql = "SELECT p FROM Post p WHERE p.user.id = :userId";
+        String jpql = "select p from Post p where p.user.id = :userId";
         List<Post> postList = em.createQuery(jpql, Post.class)
                 .setParameter("userId", user.getId())
                 .setFirstResult(pageSize * pageNo)
@@ -94,12 +96,21 @@ public class PostRepository {
     }
 
     // 사용자 찾는 메서드
-    public User findUser(UserForm userForm) {
+    private User findUser(UserForm userForm) {
         if (userForm == null || userForm.getId() == null) {
             throw new IllegalArgumentException("userForm is null");
         }
         User user = em.find(User.class, userForm.getId());
         return user;
+    }
+
+    private Post findPost(PostForm postForm) {
+        if (postForm == null || postForm.getId() == null) {
+            throw new IllegalArgumentException("postForm is Null");
+        }
+
+        Post post = em.find(Post.class ,postForm.getId());
+        return post;
     }
 
 }
