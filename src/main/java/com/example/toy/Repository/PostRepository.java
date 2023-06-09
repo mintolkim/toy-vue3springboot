@@ -1,6 +1,7 @@
 package com.example.toy.Repository;
 
 import com.example.toy.Entity.Date;
+import com.example.toy.Entity.Menu;
 import com.example.toy.Entity.Post;
 import com.example.toy.Entity.User;
 import com.example.toy.RequestForm.PostForm;
@@ -31,6 +32,9 @@ public class PostRepository {
 
         Date date = new Date();
         date.WriteDate(LocalDateTime.now());
+
+        Menu menu = em.find(Menu.class, postForm.getMenu_id());
+        post.setMenu(menu);
 
         post.setDate(date);
         post.setUser(user);
@@ -82,9 +86,10 @@ public class PostRepository {
             postForm.setSubject(post.getSubject());
             postForm.setContent(post.getContent());
 
-            if (post.getDate() != null) {
+            if (post.getDate() != null || post.getMenu() != null) {
                 postForm.setWriteDate(post.getDate().getWriteDate());
                 postForm.setUpdateDate(post.getDate().getUpdateDate());
+                postForm.setMenu_id(post.getMenu().getId());
             }
 
             // 필요한 필드들을 매핑

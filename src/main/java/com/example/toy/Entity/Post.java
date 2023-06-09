@@ -30,12 +30,21 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
     @Embedded
     private Date date;
 
     public void setUser(User user){
         this.user = user;
         user.getPostList().add(this);
+    }
+
+    public void setMenu(Menu menu){
+        this.menu = menu;
+        menu.getPostList().add(this);
     }
 
 }
