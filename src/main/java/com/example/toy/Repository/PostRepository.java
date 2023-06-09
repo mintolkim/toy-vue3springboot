@@ -39,6 +39,21 @@ public class PostRepository {
 
     // 글 수정
     public void updatePost(PostForm postForm) {
+        if (postForm == null || postForm.getId() == null) {
+            throw new IllegalArgumentException("postForm is Null");
+        }
+
+        Post post = em.find(Post.class ,postForm.getId());
+        post.setSubject(postForm.getSubject());
+        post.setContent(postForm.getContent());
+
+        Date date = new Date();
+        date.changeUpdateDate(LocalDateTime.now());
+        date.WriteDate(postForm.getWriteDate());
+        post.setDate(date);
+
+        em.persist(post);
+
     }
 
     // 글 삭제
@@ -81,7 +96,7 @@ public class PostRepository {
     // 사용자 찾는 메서드
     public User findUser(UserForm userForm) {
         if (userForm == null || userForm.getId() == null) {
-            throw new IllegalArgumentException("UserForm or UserForm ID must not be null");
+            throw new IllegalArgumentException("userForm is null");
         }
         User user = em.find(User.class, userForm.getId());
         return user;
