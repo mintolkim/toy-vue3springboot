@@ -55,4 +55,18 @@ public class CommentService {
         }
         return result;
     }
+
+    // 포스트 댓글 목록
+    public Map<String, Object> viewComment(long postId) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            commentRepository.viewComment(postId);
+            result.put("status", "200");
+            result.put("message", "댓글이 삭제되었습니다.");
+        } catch (Exception e) {
+            result.put("status", "500");
+            result.put("message", "댓글 삭제에 실패하였습니다.");
+        }
+        return result;
+    }
 }

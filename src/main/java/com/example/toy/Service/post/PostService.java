@@ -75,4 +75,17 @@ public class PostService {
         return result;
     }
 
+    // 글 상세보기
+    public Map<String, Object> viewPost(Long postId) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            PostForm postForm = postRepository.viewPost(postId);
+            result.put("status", "200");
+            result.put("result", postForm);
+        } catch (Exception e) {
+            result.put("status", "500");
+            result.put("message", "글 조회에 실패하였습니다.");
+        }
+        return result;
+    }
 }

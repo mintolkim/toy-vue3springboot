@@ -54,4 +54,8 @@ public class CommentRepository {
                 .executeUpdate();
         em.clear();
     }
+
+    // 댓글 보기
+    public void viewComment(long postId) {
+    }
 }

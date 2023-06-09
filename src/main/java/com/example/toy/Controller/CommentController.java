@@ -5,10 +5,7 @@ import com.example.toy.Service.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -40,6 +37,11 @@ public class CommentController {
         return ResponseEntity.ok().body(result);
     }
     
-    // TODO : 댓글 페이지 네이션 및 restapi 로 post 아이디 받기
+    // 댓글 보기
+    @PostMapping("{postId}")
+    public ResponseEntity<Map<String, Object>> viewComment(@PathVariable long postId){
+        Map<String, Object> result = commentService.viewComment(postId);
+        return ResponseEntity.ok().body(result);
+    }
 
 }

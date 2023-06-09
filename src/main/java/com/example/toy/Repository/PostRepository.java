@@ -109,6 +109,23 @@ public class PostRepository {
         return user;
     }
 
+    // 상세보기
+    public PostForm viewPost(Long postId) {
+        Post post = em.find(Post.class ,postId);
+
+        PostForm postForm = new PostForm();
+
+        postForm.setId(post.getId());
+        postForm.setSubject(post.getSubject());
+        postForm.setContent(post.getContent());
+        postForm.setWriteDate(post.getDate().getWriteDate());
+        postForm.setWriteDate(post.getDate().getWriteDate());
+        postForm.setMenu_id(post.getMenu().getId());
+
+        return postForm;
+    }
+
+    // 포스트 찾기
     private Post findPost(PostForm postForm) {
         if (postForm == null || postForm.getId() == null) {
             throw new IllegalArgumentException("postForm is Null");
@@ -117,5 +134,4 @@ public class PostRepository {
         Post post = em.find(Post.class ,postForm.getId());
         return post;
     }
-
 }
