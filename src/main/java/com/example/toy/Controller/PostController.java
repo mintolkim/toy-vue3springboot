@@ -52,4 +52,7 @@ public class PostController {
         return ResponseEntity.ok().body(result);
     }
 
+    // 글 상세보기
+    
+
 }

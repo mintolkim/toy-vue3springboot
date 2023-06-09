@@ -4,6 +4,7 @@ import com.example.toy.Entity.Menu;
 import com.example.toy.Entity.User;
 import com.example.toy.Repository.MenuRepository;
 import com.example.toy.RequestForm.MenuForm;
+import com.example.toy.RequestForm.PostForm;
 import com.example.toy.RequestForm.UserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,19 @@ public class BlogService {
             List<MenuForm> MenuList = menuRepository.selectMenu(userForm);
             result.put("status", "200");
             result.put("result", MenuList);
+        } catch (Exception e) {
+            result.put("status", "500");
+            result.put("message", "메뉴 조회에 실패하였습니다.");
+        }
+        return result;
+    }
+
+    public Map<String, Object> postMenu(MenuForm menuForm, int pageNo) {
+        Map<String, Object> result = new HashMap<>();
+        try{
+            List<PostForm> PostList = menuRepository.menuPost(menuForm, pageNo);
+            result.put("status", "200");
+            result.put("result", PostList);
         } catch (Exception e) {
             result.put("status", "500");
             result.put("message", "메뉴 조회에 실패하였습니다.");

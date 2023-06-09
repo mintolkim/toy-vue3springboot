@@ -1,8 +1,10 @@
 package com.example.toy.Repository;
 
 import com.example.toy.Entity.Menu;
+import com.example.toy.Entity.Post;
 import com.example.toy.Entity.User;
 import com.example.toy.RequestForm.MenuForm;
+import com.example.toy.RequestForm.PostForm;
 import com.example.toy.RequestForm.UserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -73,6 +75,35 @@ public class MenuRepository {
         }
 
         return menuFormList;
+    }
+
+    // 메뉴 별 글 목록 보기
+    public List<PostForm> menuPost (MenuForm menuForm, int pageNo){
+        int pageSize = 10;
+        Menu menu = em.find(Menu.class, menuForm.getId());
+        String jpql = "select p from Post p where p.menu =: menu";
+        List<Post> postList = em.createQuery(jpql)
+                            .setParameter("menu", menu)
+                            .setFirstResult(pageSize * pageNo)
+                            .setMaxResults(pageSize)
+                            .getResultList();
+
+        List<PostForm> postFormList = new ArrayList<>();
+        for (Post post : postList){
+            PostForm postForm = new PostForm();
+            postForm.setId(post.getId());
+            postForm.setSubject(post.getSubject());
+            postForm.setContent(post.getContent());
+
+            if (post.getDate() != null || post.getMenu() != null) {
+                postForm.setWriteDate(post.getDate().getWriteDate());
+                postForm.setUpdateDate(post.getDate().getUpdateDate());
+                postForm.setMenu_id(post.getMenu().getId());
+            }
+            postFormList.add(postForm);
+        }
+
+        return postFormList;
     }
 
 

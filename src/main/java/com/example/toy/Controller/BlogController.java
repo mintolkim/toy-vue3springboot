@@ -48,4 +48,11 @@ public class BlogController {
         Map<String, Object> result = blogService.selectMenu(userForm);
         return ResponseEntity.ok().body(result);
     }
+
+    // 메뉴 별 글 목록 보기
+    @PostMapping("postMenu")
+    public ResponseEntity<Map<String, Object>> postMenu(@RequestBody MenuForm menuForm, int pageNo) {
+        Map<String, Object> result = blogService.postMenu(menuForm, pageNo);
+        return ResponseEntity.ok().body(result);
+    }
 }
