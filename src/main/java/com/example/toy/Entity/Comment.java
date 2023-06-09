@@ -25,5 +25,14 @@ public class Comment {
     private User user;
 
     private String content;
+    public void setUser (User user){
+        this.user = user;
+        user.getCommentList().add(this);
+    }
+
+    public void setPost (Post post){
+        this.post = post;
+        post.getCommentList().add(this);
+    }
 
 }
