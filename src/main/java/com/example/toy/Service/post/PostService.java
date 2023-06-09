@@ -53,6 +53,7 @@ public class PostService {
             result.put("status", "200");
             result.put("message", "글 삭제가 완료되었습니다.");
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("status", "500");
             result.put("message", "글 삭제에 실패하였습니다.");
         }

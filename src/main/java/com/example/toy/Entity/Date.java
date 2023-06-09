@@ -17,4 +17,12 @@ public class Date {
     public Date() {
     }
 
+    public void WriteDate(LocalDateTime writeDate) {
+        this.writeDate = writeDate;
+    }
+
+    public void changeUpdateDate(LocalDateTime updateDate) {
+        this.updateDate = updateDate;
+    }
+
 }
