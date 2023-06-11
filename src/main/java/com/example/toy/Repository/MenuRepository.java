@@ -20,17 +20,18 @@ public class MenuRepository {
     private final EntityManager em;
 
     // 메뉴 생성
-    public void createMenu(MenuForm menuForm, UserForm userForm) throws Exception{
+    public String createMenu(MenuForm menuForm){
         Map<String, Object> result = new HashMap<>();
-        User user = findUser(userForm);
+        User user = findUser(menuForm);
         Menu menu = new Menu();
         menu.setMenuName(menuForm.getMenuName());
         menu.setUser(user);
         em.persist(menu);
+        return menuForm.getMenuName();
     }
 
     // 메뉴 삭제
-    public void deleteMenu(MenuForm menuForm) {
+    public String deleteMenu(MenuForm menuForm) {
         Menu menu = em.find(Menu.class, menuForm.getId());
         if (menu != null) {
             String jpql = "delete from Menu m where id = :id ";
@@ -41,28 +42,30 @@ public class MenuRepository {
         } else {
             throw new RuntimeException("Menu not found");
         }
+        return menuForm.getMenuName();
     }
 
     // 메뉴 수정
-    public void updateMenu(MenuForm menuForm) {
+    public String updateMenu(MenuForm menuForm) {
         Menu menu = em.find(Menu.class, menuForm.getId());
         menu.setMenuName(menuForm.getMenuName());
         em.persist(menu);
+        return menuForm.getMenuName();
     }
 
     // 사용자 찾는 메서드
-    public User findUser(UserForm userForm) {
-        if (userForm == null || userForm.getId() == null) {
+    public User findUser(MenuForm menuForm) {
+        if (menuForm == null || menuForm.getUserId() == null) {
             throw new IllegalArgumentException("UserForm or UserForm ID must not be null");
         }
-        User user = em.find(User.class, userForm.getId());
+        User user = em.find(User.class, menuForm.getUserId());
         return user;
     }
 
 
     // 메뉴 조회
     public List<MenuForm> selectMenu(UserForm userForm) {
-        User user = findUser(userForm);
+        User user = em.find(User.class, userForm.getId());
         List<Menu> menuList = user.getMenuList();
 
         // MenuForm으로 변환
@@ -71,6 +74,7 @@ public class MenuRepository {
             MenuForm menuForm = new MenuForm();
             menuForm.setId(menu.getId());
             menuForm.setMenuName(menu.getMenuName());
+            menuForm.setUserId(menu.getUser().getId());
             menuFormList.add(menuForm);
         }
 
@@ -94,11 +98,12 @@ public class MenuRepository {
             postForm.setId(post.getId());
             postForm.setSubject(post.getSubject());
             postForm.setContent(post.getContent());
+            postForm.setUserId(post.getUser().getId());
 
             if (post.getDate() != null || post.getMenu() != null) {
                 postForm.setWriteDate(post.getDate().getWriteDate());
                 postForm.setUpdateDate(post.getDate().getUpdateDate());
-                postForm.setMenu_id(post.getMenu().getId());
+                postForm.setMenuId(post.getMenu().getId());
             }
             postFormList.add(postForm);
         }

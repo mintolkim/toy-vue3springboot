@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.toy.util.ServiceUtil.serviceUtilMethod;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -15,58 +17,36 @@ public class CommentService {
 
     // 댓글 쓰기
     public Map<String, Object> writeComment(CommentForm commentForm) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            commentRepository.writeComment(commentForm);
-            result.put("status", "200");
-            result.put("message", "댓글이 등록되었습니다.");
-        } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "댓글 등록에 실패하였습니다.");
-        }
-        return result;
+        return serviceUtilMethod(
+            () -> commentRepository.writeComment(commentForm),
+            "댓글이 등록되었습니다.",
+            "댓글 등록에 실패하였습니다."
+        );
     }
 
     // 댓글 수정
     public Map<String, Object> updateComment(CommentForm commentForm) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            commentRepository.updateComment(commentForm);
-            result.put("status", "200");
-            result.put("message", "댓글이 수정되었습니다.");
-        } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "댓글 수정에 실패하였습니다.");
-        }
-        return result;
-
+        return serviceUtilMethod(
+                () -> commentRepository.updateComment(commentForm),
+                "댓글이 수정되었습니다.",
+                "댓글 수정에 실패하였습니다."
+        );
     }
 
     // 댓글 삭제
     public Map<String, Object> deleteComment(CommentForm commentForm) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            commentRepository.deleteComment(commentForm);
-            result.put("status", "200");
-            result.put("message", "댓글이 삭제되었습니다.");
-        } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "댓글 삭제에 실패하였습니다.");
-        }
-        return result;
+        return serviceUtilMethod(
+            () -> commentRepository.deleteComment(commentForm),
+            "댓글이 삭제되었습니다.",
+            "댓글 삭제에 실패하였습니다."
+        );
     }
 
-    // 포스트 댓글 목록
     public Map<String, Object> viewComment(long postId) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            commentRepository.viewComment(postId);
-            result.put("status", "200");
-            result.put("message", "댓글이 삭제되었습니다.");
-        } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "댓글 삭제에 실패하였습니다.");
-        }
-        return result;
+        return serviceUtilMethod(
+            () -> commentRepository.viewComment(postId),
+            "댓글이 삭제되었습니다.",
+            "댓글 삭제에 실패하였습니다."
+        );
     }
 }

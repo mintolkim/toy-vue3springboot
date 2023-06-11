@@ -23,8 +23,8 @@ public class PostController {
 
     // 글 등록
     @PostMapping("write")
-    public ResponseEntity<Map<String, Object>> writePost(@RequestBody PostForm postForm, UserForm userForm){
-        Map<String, Object> result = postService.writePost(postForm, userForm);
+    public ResponseEntity<Map<String, Object>> writePost(@RequestBody PostForm postForm){
+        Map<String, Object> result = postService.writePost(postForm);
         return ResponseEntity.ok().body(result);
     }
 
@@ -43,9 +43,9 @@ public class PostController {
     }
 
     // 글 조회
-    @PostMapping("getList")
-    public ResponseEntity<Map<String, Object>> getPostList(UserForm userForm, int pageNo){
-        Map<String, Object> result = postService.getPostList(userForm, pageNo);
+    @PostMapping("postList/{pageNo}")
+    public ResponseEntity<Map<String, Object>> getPostList(@RequestBody PostForm postForm,@PathVariable int pageNo){
+        Map<String, Object> result = postService.getPostList(postForm, pageNo);
         return ResponseEntity.ok().body(result);
     }
 

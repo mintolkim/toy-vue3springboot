@@ -20,32 +20,24 @@ public class UserRepository {
 
     // 회원가입
     @Transactional
-    public void join(UserForm userForm) {
+    public String join(UserForm userForm) {
         try {
             User user = createUserFromForm(userForm);
             em.persist(user);
         } catch (Exception e) {
             throw new RuntimeException("user join fail");
         }
+        return userForm.getUsername();
     }
 
     // 로그인
-    public Map<String, Object> login(UserForm userForm) {
-        Map<String, Object> result = new HashMap<>();
-        User user = checkPassword(userForm);
-
-        if (user != null){
-            result.put("status", "200");
-            result.put("message", "환영합니다. " + user.getUsername());
-            return result;
-        } else {
-            throw new RuntimeException("login error");
-        }
+    public User login(UserForm userForm) {
+        return checkPassword(userForm);
     }
 
     // 회원 탈퇴
     @Transactional
-    public void deleteUser(UserForm userForm) {
+    public String deleteUser(UserForm userForm) {
         try {
             User user = em.find(User.class, userForm.getId());
             if (user != null) {
@@ -56,6 +48,7 @@ public class UserRepository {
         } catch (Exception e){
             throw new RuntimeException("user delete fail");
         }
+        return userForm.getUsername();
     }
 
     // 아이디 중복체크

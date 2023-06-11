@@ -21,8 +21,8 @@ public class UserController {
 
     // 회원 가입
     @PostMapping("join")
-    public ResponseEntity<Map<String, String>> join(@RequestBody UserForm userForm){
-        Map<String, String> result = userService.Join(userForm);
+    public ResponseEntity<Map<String, Object>> join(@RequestBody UserForm userForm){
+        Map<String, Object> result = userService.Join(userForm);
         return ResponseEntity.ok().body(result);
     }
 
@@ -42,8 +42,8 @@ public class UserController {
 
     // 회원 탈퇴
     @PostMapping("deleteUser")
-    public ResponseEntity<Map<String, String>> deleteUser(@RequestBody UserForm userForm) {
-        Map<String,String> result = userService.deleteUser(userForm);
+    public ResponseEntity<Map<String, Object>> deleteUser(@RequestBody UserForm userForm) {
+        Map<String, Object> result = userService.deleteUser(userForm);
         return ResponseEntity.ok().body(result);
     }
 }

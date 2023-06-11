@@ -8,6 +8,7 @@ import lombok.Setter;
 public class MenuForm {
     private Long id;
     private String menuName;
+    private Long userId;
 
     public MenuForm() {
     }

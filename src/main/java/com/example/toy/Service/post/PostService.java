@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.toy.util.ServiceUtil.serviceUtilMethod;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -17,75 +19,48 @@ public class PostService {
     private final PostRepository postRepository;
 
     // 글 등록
-    public Map<String, Object> writePost(PostForm postForm, UserForm userForm) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            postRepository.writePost(postForm, userForm);
-            result.put("status", "200");
-            result.put("message", "글 등록이 완료되었습니다.");
-        } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "글 등록에 실패하였습니다.");
-        }
-
-        return result;
+    public Map<String, Object> writePost(PostForm postForm) {
+        return serviceUtilMethod(
+            () -> postRepository.writePost(postForm),
+            "글 등록이 완료되었습니다.",
+            "글 등록에 실패하였습니다."
+        );
     }
 
     // 글 수정
     public Map<String, Object> updatePost(PostForm postForm) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            postRepository.updatePost(postForm);
-            result.put("status", "200");
-            result.put("message", "글 수정이 완료되었습니다.");
-        } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "글 수정에 실패하였습니다.");
-        }
-        return result;
+        return serviceUtilMethod(
+            () -> postRepository.updatePost(postForm),
+            "글 수정이 완료되었습니다.",
+            "글 수정에 실패하였습니다."
+        );
     }
 
     // 글 삭제
     public Map<String, Object> deletePost(PostForm postForm) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            postRepository.deletePost(postForm);
-            result.put("status", "200");
-            result.put("message", "글 삭제가 완료되었습니다.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.put("status", "500");
-            result.put("message", "글 삭제에 실패하였습니다.");
-        }
-        return result;
+        return serviceUtilMethod(
+            () -> postRepository.deletePost(postForm),
+            "글 삭제가 완료되었습니다.",
+            "글 삭제에 실패하였습니다."
+        );
     }
 
 
     // 글 조회
-    public Map<String, Object> getPostList(UserForm userForm, int pageNo) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            List<PostForm> postFormList = postRepository.getPostList(userForm, pageNo);
-            result.put("status", "200");
-            result.put("result", postFormList);
-        } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "글 조회에 실패하였습니다.");
-        }
-        return result;
+    public Map<String, Object> getPostList(PostForm postForm, int pageNo) {
+        return serviceUtilMethod(
+            () -> postRepository.getPostList(postForm, pageNo),
+            "글 조회가 완료되었습니다.",
+            "글 조회에 실패하였습니다."
+        );
     }
 
     // 글 상세보기
     public Map<String, Object> viewPost(Long postId) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            PostForm postForm = postRepository.viewPost(postId);
-            result.put("status", "200");
-            result.put("result", postForm);
-        } catch (Exception e) {
-            result.put("status", "500");
-            result.put("message", "글 조회에 실패하였습니다.");
-        }
-        return result;
+        return serviceUtilMethod(
+            () -> postRepository.viewPost(postId),
+            "글 조회가 완료되었습니다.",
+            "글 조회에 실패하였습니다."
+        );
     }
 }

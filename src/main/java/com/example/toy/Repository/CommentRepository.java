@@ -19,7 +19,7 @@ public class CommentRepository {
     private final EntityManager em;
 
     // 댓글 작성
-    public void writeComment(CommentForm commentForm) {
+    public String writeComment(CommentForm commentForm) {
         Comment comment = new Comment();
         comment.setContent(commentForm.getContent());
 
@@ -33,29 +33,35 @@ public class CommentRepository {
         comment.setDate(date);
 
         em.persist(comment);
+
+        return commentForm.getContent();
     }
 
     // 댓글 수정
-    public void updateComment(CommentForm commentForm) {
+    public String updateComment(CommentForm commentForm) {
         Comment comment = em.find(Comment.class ,commentForm.getId());
         Date date = new Date();
         date.changeUpdateDate(LocalDateTime.now());
+        date.WriteDate(comment.getDate().getWriteDate());
         comment.setDate(date);
         comment.setContent(commentForm.getContent());
         em.persist(comment);
+        return commentForm.getContent();
     }
 
     // 댓글 삭제
-    public void deleteComment(CommentForm commentForm) {
+    public String deleteComment(CommentForm commentForm) {
         Comment comment = em.find(Comment.class, commentForm.getId());
         String jpql = "delete from Comment c where id =: id";
         em.createQuery(jpql)
                 .setParameter("id", comment.getId())
                 .executeUpdate();
         em.clear();
+        return commentForm.getContent();
     }
 
     // 댓글 보기
-    public void viewComment(long postId) {
+    public String viewComment(long postId) {
+        return null;
     }
 }

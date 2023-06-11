@@ -22,8 +22,8 @@ public class PostRepository {
     private final EntityManager em;
 
     // 글 등록
-    public void writePost(PostForm postForm, UserForm userForm) {
-        User user = findUser(userForm);
+    public String writePost(PostForm postForm) {
+        User user = findUser(postForm);
 
         Post post = new Post();
         post.setId(postForm.getId());
@@ -33,16 +33,18 @@ public class PostRepository {
         Date date = new Date();
         date.WriteDate(LocalDateTime.now());
 
-        Menu menu = em.find(Menu.class, postForm.getMenu_id());
+        Menu menu = em.find(Menu.class, postForm.getMenuId());
         post.setMenu(menu);
 
         post.setDate(date);
         post.setUser(user);
         em.persist(post);
+
+        return postForm.getSubject();
     }
 
     // 글 수정
-    public void updatePost(PostForm postForm) {
+    public String updatePost(PostForm postForm) {
         Post post = findPost(postForm);
         post.setSubject(postForm.getSubject());
         post.setContent(postForm.getContent());
@@ -54,21 +56,23 @@ public class PostRepository {
 
         em.persist(post);
 
+        return postForm.getSubject();
     }
 
     // 글 삭제
-    public void deletePost(PostForm postForm) {
+    public String deletePost(PostForm postForm) {
         Post post = findPost(postForm);
         String jpql = "delete from Post p where p.id =: id";
         em.createQuery(jpql)
                 .setParameter("id", post.getId())
                 .executeUpdate();
         em.clear();
+        return postForm.getSubject();
     }
 
     // 글 조회
-    public List<PostForm> getPostList(UserForm userForm, int pageNo) {
-        User user = findUser(userForm);
+    public List<PostForm> getPostList(PostForm reqPostForm, int pageNo) {
+        User user = findUser(reqPostForm);
         int pageSize = 10; // 한 페이지당 데이터 수
 
         String jpql = "select p from Post p where p.user.id = :userId";
@@ -89,7 +93,7 @@ public class PostRepository {
             if (post.getDate() != null || post.getMenu() != null) {
                 postForm.setWriteDate(post.getDate().getWriteDate());
                 postForm.setUpdateDate(post.getDate().getUpdateDate());
-                postForm.setMenu_id(post.getMenu().getId());
+                postForm.setMenuId(post.getMenu().getId());
             }
 
             // 필요한 필드들을 매핑
@@ -101,11 +105,11 @@ public class PostRepository {
     }
 
     // 사용자 찾는 메서드
-    private User findUser(UserForm userForm) {
-        if (userForm == null || userForm.getId() == null) {
+    private User findUser(PostForm postForm) {
+        if (postForm == null || postForm.getUserId() == null) {
             throw new IllegalArgumentException("userForm is null");
         }
-        User user = em.find(User.class, userForm.getId());
+        User user = em.find(User.class, postForm.getUserId());
         return user;
     }
 
@@ -119,8 +123,9 @@ public class PostRepository {
         postForm.setSubject(post.getSubject());
         postForm.setContent(post.getContent());
         postForm.setWriteDate(post.getDate().getWriteDate());
-        postForm.setWriteDate(post.getDate().getWriteDate());
-        postForm.setMenu_id(post.getMenu().getId());
+        postForm.setUpdateDate(post.getDate().getUpdateDate());
+        postForm.setMenuId(post.getMenu().getId());
+        postForm.setUserId(post.getUser().getId());
 
         return postForm;
     }

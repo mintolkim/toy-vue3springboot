@@ -19,7 +19,9 @@ public class PostForm {
 
     private LocalDateTime writeDate;
 
-    private Long menu_id;
+    private Long menuId;
+
+    private Long userId;
 
     public PostForm() {
     }
