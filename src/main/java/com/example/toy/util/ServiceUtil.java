@@ -15,7 +15,7 @@ public class ServiceUtil {
         } catch (Exception e) {
             result.put("status", "500");
             result.put("message", failMsg);
-            result.put("errorMsg", e.getMessage());
+            result.put("errorMsg", e.toString());
         }
         return result;
     }

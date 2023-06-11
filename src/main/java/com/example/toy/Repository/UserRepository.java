@@ -22,8 +22,12 @@ public class UserRepository {
     @Transactional
     public String join(UserForm userForm) {
         try {
-            User user = createUserFromForm(userForm);
-            em.persist(user);
+            if (isIdUnique(userForm)){
+                User user = createUserFromForm(userForm);
+                em.persist(user);
+            } else {
+                throw new RuntimeException("user join fail");
+            }
         } catch (Exception e) {
             throw new RuntimeException("user join fail");
         }

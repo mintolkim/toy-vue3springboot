@@ -56,7 +56,7 @@ public class MenuRepository {
     // 사용자 찾는 메서드
     public User findUser(MenuForm menuForm) {
         if (menuForm == null || menuForm.getUserId() == null) {
-            throw new IllegalArgumentException("UserForm or UserForm ID must not be null");
+            throw new IllegalArgumentException("menuForm is null");
         }
         User user = em.find(User.class, menuForm.getUserId());
         return user;

@@ -133,7 +133,7 @@ public class PostRepository {
     // 포스트 찾기
     private Post findPost(PostForm postForm) {
         if (postForm == null || postForm.getId() == null) {
-            throw new IllegalArgumentException("postForm is Null");
+            throw new IllegalArgumentException("postForm is null");
         }
 
         Post post = em.find(Post.class ,postForm.getId());
