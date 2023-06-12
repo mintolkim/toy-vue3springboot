@@ -108,7 +108,24 @@
 </template>
 
 <script>
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
 
+export default {
+  setup(){
+    const route = useRoute();
+    const userData = ref(null);
+
+    onMounted(() => {
+      userData.value = route.params.userData;
+
+    });
+
+    return{
+      userData
+    }
+  }
+}
 </script>
 
 <style>

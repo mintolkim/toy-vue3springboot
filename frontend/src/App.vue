@@ -36,11 +36,9 @@ export default {
         AlertModal
     },
     setup () {
-        const name = ref('mintol');
         const showModal = ref(false);
         const showAlert = ref(false);
         return{
-            name,
             showModal,
             showAlert
         }

@@ -15,6 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8083")
 public class BlogController {
     private final BlogService blogService;
 
