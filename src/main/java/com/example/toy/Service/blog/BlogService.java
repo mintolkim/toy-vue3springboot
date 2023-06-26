@@ -1,5 +1,6 @@
 package com.example.toy.Service.blog;
 
+import com.example.toy.Repository.BlogRepository;
 import com.example.toy.Repository.MenuRepository;
 import com.example.toy.RequestForm.MenuForm;
 import com.example.toy.RequestForm.PostForm;
@@ -17,6 +18,16 @@ import static com.example.toy.util.ServiceUtil.serviceUtilMethod;
 @RequiredArgsConstructor
 public class BlogService {
     private final MenuRepository menuRepository;
+    private final BlogRepository blogRepository;
+
+    // 블로그 정보
+    public Map<String, Object> blogInfo(Long id) {
+        return serviceUtilMethod(
+            () -> blogRepository.blogInfo(id),
+            "블로그 조회에 성공하였습니다.",
+            "블로그 조회에 실패했습니다."
+        );
+    }
 
     // 메뉴 생성
     public Map<String, Object> createMenu(MenuForm menuForm) {

@@ -8,6 +8,10 @@
         <label for="floatingInput">Id</label>
       </div>
       <div class="form-floating mb-2">
+        <input type="text" class="form-control" id="floatingInput" placeholder="Nick name" v-model="nickname">
+        <label for="floatingInput">Nick Name</label>
+      </div>
+      <div class="form-floating mb-2">
         <div></div>
         <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
         <label for="floatingPassword">Password</label>
@@ -40,6 +44,7 @@ export default {
     const router = useRouter();
     const userData = reactive({
       username: '',
+      nickname: '',
       password: '',
       city: ''
     })

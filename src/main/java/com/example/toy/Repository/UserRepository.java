@@ -1,6 +1,7 @@
 package com.example.toy.Repository;
 
 import com.example.toy.Entity.Address;
+import com.example.toy.Entity.Menu;
 import com.example.toy.Entity.User;
 import com.example.toy.RequestForm.UserForm;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ public class UserRepository {
             if (isIdUnique(userForm)){
                 User user = createUserFromForm(userForm);
                 em.persist(user);
+                // 기본 메뉴 설정하기
+                createBaseMenu(user);
             } else {
                 throw new RuntimeException("user join fail");
             }
@@ -39,6 +42,7 @@ public class UserRepository {
         User user = checkPassword(userForm);
         if (user != null){
             userForm.setId(user.getId());
+            userForm.setNickname(user.getNickname());
             userForm.setUsername(user.getUsername());
             userForm.setCity(user.getAddress().getCity());
             userForm.setStreet(user.getAddress().getStreet());
@@ -94,10 +98,24 @@ public class UserRepository {
     private User createUserFromForm(UserForm userForm) {
         User user = new User();
         user.setUsername(userForm.getUsername());
+        user.setNickname(userForm.getNickname());
         user.setPassword(userForm.getPassword());
         user.setAddress(new Address(userForm.getCity(), userForm.getStreet(), userForm.getZipcode()));
         user.setType(userForm.getType());
         return user;
+    }
+
+    // 기본 메뉴 insert 하기
+    private void createBaseMenu(User user){
+        Menu menu = new Menu();
+        menu.setUser(user);
+        menu.setMenuName("자유 게시판");
+        em.persist(menu);
+        Menu menu2 = new Menu();
+        menu2.setUser(user);
+        menu2.setMenuName("메모장");
+        em.persist(menu2);
+
     }
 
 }

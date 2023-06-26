@@ -26,7 +26,7 @@
 import greedMenu from "@/components/GreedMenu.vue"
 import todayWeather from "@/components/TodayWeather.vue"
 import {useStore} from "vuex";
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
 import {useRoute} from "vue-router";
 export default {
     props : {
@@ -40,6 +40,13 @@ export default {
         todayWeather
     },
   setup(){
+      onMounted(() => {
+        try {
+
+        } catch (e) {
+          console.log(e);
+        }
+      });
       const store = useStore();
       const route = useRoute();
       const updateStatus = computed(() => store.state?.user?.username);

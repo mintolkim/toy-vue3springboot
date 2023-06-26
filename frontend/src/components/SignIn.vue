@@ -61,7 +61,8 @@ export default {
             console.log("###############")
             console.log(response.data);
             console.log("###############")
-            store.commit('setUser',{id : response.data.id ,username : response.data.result.username});
+            store.commit('setUser',{id : response.data.result.id ,username : response.data.result.username, nickname: response.data.result.nickname});
+
           })
           .catch(error => {
             console.error(error);

@@ -52,8 +52,8 @@ export default {
         //ModalComponent
     },
     setup () {
-      const {showAlert, message} = alertEvent();
       const store = useStore();
+      const {showAlert, message, setMessage, setTimeAlert} = alertEvent(store);
       const booleanShow = computed(() => showAlert.value);
       const alertMessage = computed(() => message.value);
       const userInfo = computed(() => store.state.user);
@@ -65,10 +65,12 @@ export default {
       }
       const logOut = () => {
         store.commit('setUser', null);
+        setTimeAlert(true);
+        setMessage("로그아웃 되었습니다.");
       }
 
       return{
-        showAlert, message,
+        showAlert, message, setMessage, setTimeAlert,
         booleanShow, alertMessage, userInfo, moveBlog, userName, logOut
         }
     }
