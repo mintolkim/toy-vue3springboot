@@ -1,6 +1,5 @@
 <template>
-    <AlertModal v-if="showAlert" />
-    <ModalComponent v-if="showModal" />
+  <AlertModal v-if="booleanShow" :message="alertMessage" />
     <div class="container">
       <div class="my-3 row row-cols-2">
         <div class="col-6">
@@ -12,13 +11,27 @@
             BLOG HOME
           </router-link></div>
         <div class="col log" >
-          <router-link to="/signin">
+          <router-link to="/signin" v-if="!userInfo">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
               <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
               <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
             </svg>
             sign in
           </router-link>
+          <a href="#" @click="moveBlog()" v-if="userInfo && $route.path !== '/' + userName">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+              <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+            </svg>
+            my_blog
+          </a>
+          <a href="#" @click="logOut()" v-if="userInfo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+              <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+            </svg>
+            logout
+          </a>
         </div>
       </div>
     </div>
@@ -26,21 +39,37 @@
 </template>
 
 <script>
-import ModalComponent from "@/components/ModalComponent.vue"
-import {ref} from "vue";
 import AlertModal from "@/components/AlertModal.vue"
+import { alertEvent } from "@/composables/alertEvent";
+import {computed, ref} from "vue";
+import {useRouter} from "vue-router";
+import {useStore} from "vuex";
+//import ModalComponent from "@/components/ModalComponent.vue";
+
 export default {
     components: {
-        //BlogMain,
-        ModalComponent,
         AlertModal
+        //ModalComponent
     },
     setup () {
-        const showModal = ref(false);
-        const showAlert = ref(false);
-        return{
-            showModal,
-            showAlert
+      const {showAlert, message} = alertEvent();
+      const store = useStore();
+      const booleanShow = computed(() => showAlert.value);
+      const alertMessage = computed(() => message.value);
+      const userInfo = computed(() => store.state.user);
+      const userName = ref(null);
+      const router = useRouter();
+      const moveBlog = () => {
+          userName.value = userInfo.value.username;
+          router.push('/'+userName.value);
+      }
+      const logOut = () => {
+        store.commit('setUser', null);
+      }
+
+      return{
+        showAlert, message,
+        booleanShow, alertMessage, userInfo, moveBlog, userName, logOut
         }
     }
 

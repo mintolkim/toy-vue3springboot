@@ -33,7 +33,9 @@
 
 import PostBlog from "@/components/PostBlog.vue";
 import UserProfile from "@/components/UserProfile.vue";
-import {useRouter} from "vue-router";
+import {onMounted} from "vue";
+import api from "@/axios";
+import {useRoute, useRouter} from "vue-router";
 
 export default {
     components: {
@@ -41,16 +43,30 @@ export default {
         UserProfile
     },
     props : {
-        name:{
-            type: String,
-            required: true
-        }
+
     },
     setup(){
+      const route = useRoute();
       const router = useRouter();
+      //const blog = reactive({
+      //  title : null
+      //});
+      onMounted(async () => {
+        try {
+          const username = route.params.id;
+          const response = await api.post('/api/selectMenu', { username : username });
+          console.log(response.data);
+        } catch (e) {
+          console.log(e);
+          console.log('에러가 발생했습니다.');
+        }
+      });
+
       const clickEvent = () => {
         router.push('post');
       }
+
+
       return{
         clickEvent
       }

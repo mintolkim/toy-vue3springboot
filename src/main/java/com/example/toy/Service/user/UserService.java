@@ -29,13 +29,7 @@ public class UserService {
     // 로그인
     public Map<String, Object> login(UserForm userForm){
         return serviceUtilMethod(
-            () -> {
-                User user = userRepository.login(userForm);
-                if (user == null) {
-                    throw new RuntimeException("Invalid username or password");
-                }
-                return "환영합니다. " + user.getUsername();
-            },
+            () -> userRepository.login(userForm),
             "로그인에 성공하였습니다. ",
             "로그인에 실패하였습니다."
         );

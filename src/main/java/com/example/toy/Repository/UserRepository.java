@@ -35,8 +35,18 @@ public class UserRepository {
     }
 
     // 로그인
-    public User login(UserForm userForm) {
-        return checkPassword(userForm);
+    public UserForm login(UserForm userForm) {
+        User user = checkPassword(userForm);
+        if (user != null){
+            userForm.setId(user.getId());
+            userForm.setUsername(user.getUsername());
+            userForm.setCity(user.getAddress().getCity());
+            userForm.setStreet(user.getAddress().getStreet());
+            userForm.setZipcode(user.getAddress().getZipcode());
+            return userForm;
+        } else {
+            throw new RuntimeException("user login fail");
+        }
     }
 
     // 회원 탈퇴

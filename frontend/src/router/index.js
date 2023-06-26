@@ -32,6 +32,11 @@ const router = createRouter({
             path : '/signup',
             name : 'signUp',
             component : signUp
+        },
+        {
+            path : '/:id',
+            name : 'myBlog',
+            component : blogMain
         }
     ]
 })

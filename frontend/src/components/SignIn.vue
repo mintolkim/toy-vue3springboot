@@ -13,11 +13,11 @@
           </router-link>
         </div>
         <div class="form-floating">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-          <label for="floatingInput">Email address</label>
+          <input type="text" class="form-control" id="floatingInput" v-model="username">
+          <label for="floatingInput">User Id</label>
         </div>
         <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
           <label for="floatingPassword">Password</label>
         </div>
 
@@ -26,7 +26,7 @@
             <input type="checkbox" value="remember-me"> Remember me
           </label>
         </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <button class="w-100 btn btn-lg btn-primary" type="button" @click="onSubmit" >Sign in</button>
         <p class="mt-5 mb-3 text-muted">© Today's Blog</p>
       </form>
     </div>
@@ -34,8 +34,47 @@
 </template>
 
 <script>
+import api from "@/axios";
+import {reactive, toRefs} from "vue";
+import {useRouter} from "vue-router";
+import {useStore} from "vuex";
+import {alertEvent} from "@/composables/alertEvent";
+
+export default {
+  setup(){
+    const userData = reactive({
+      username: '',
+      password: ''
+    });
+
+    const store = useStore();
+    const {setTimeAlert, setMessage} = alertEvent(store);
+    const router = useRouter();
+    const onSubmit = async () => {
+      await api.post('/api/login', userData)
+          .then(response => {
+            if(response.data.status === '200'){
+              router.push({name: 'home'});
+            }
+            setTimeAlert(true);
+            setMessage(response.data.result.username + " 님 환영합니다.");
+            console.log("###############")
+            console.log(response.data);
+            console.log("###############")
+            store.commit('setUser',{id : response.data.id ,username : response.data.result.username});
+          })
+          .catch(error => {
+            console.error(error);
+          });
+    }
+    return{
+      onSubmit, ...toRefs(userData), setMessage, setTimeAlert
+    }
+  }
+}
 
 </script>
+
 
 <style>
 

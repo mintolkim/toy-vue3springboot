@@ -65,7 +65,13 @@ public class MenuRepository {
 
     // 메뉴 조회
     public List<MenuForm> selectMenu(UserForm userForm) {
-        User user = em.find(User.class, userForm.getId());
+        String jpql = "select u from User u where username = :username";
+        User user = em.createQuery(jpql, User.class)
+                .setParameter("username", userForm.getUsername())
+                .getResultList()
+                .get(0);
+
+        // User user = em.find(User.class, userForm.getId());
         List<Menu> menuList = user.getMenuList();
 
         // MenuForm으로 변환

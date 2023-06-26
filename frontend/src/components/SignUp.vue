@@ -20,7 +20,7 @@
         <input type="text" class="form-control" id="floatingInput" placeholder="Address" name="Address" v-model="city">
         <label for="floatingInput">Address</label>
       </div>
-      <button class="w-100 btn btn-lg btn-primary" type="button" @click="onsubmit">Sign Up</button>
+      <button class="w-100 btn btn-lg btn-primary" type="button" @click="onSubmit">Sign Up</button>
       <p class="mt-5 mb-3 text-muted">© Today's Blog</p>
     </div>
   </div>
@@ -30,8 +30,13 @@
 import {reactive, toRefs} from "vue";
 import api from "@/axios";
 import {useRouter} from "vue-router";
+import {alertEvent} from "@/composables/alertEvent";
+import {useStore} from "vuex";
+
 export default {
   setup(){
+    const store = useStore();
+    const { setResult, setTimeAlert, setMessage } = alertEvent(store);
     const router = useRouter();
     const userData = reactive({
       username: '',
@@ -39,15 +44,14 @@ export default {
       city: ''
     })
 
-    const onsubmit = async () => {
+    const onSubmit = async () => {
       await api.post('/api/join', userData)
           .then(response => {
-            console.log(response.data);
             if(response.data.status === '200'){
-              router.push({name: 'home', params: {userData : response.data}});
-            } else {
-              console.log(response.data.message);
+              router.push({name: 'home'});
             }
+            setTimeAlert(true);
+            setMessage(response.data.message);
           })
           .catch(error => {
             console.error(error);
@@ -55,7 +59,7 @@ export default {
     }
 
     return{
-      ...toRefs(userData), onsubmit
+      ...toRefs(userData), onSubmit, setResult, setTimeAlert, setMessage
     }
   }
 }
