@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
@@ -42,6 +44,13 @@ public class UserController {
     @PostMapping("deleteUser")
     public ResponseEntity<Map<String, Object>> deleteUser(@RequestBody UserForm userForm) {
         Map<String, Object> result = userService.deleteUser(userForm);
+        return ResponseEntity.ok().body(result);
+    }
+
+    // 유저 프로필 업로드
+    @PostMapping("/{id}/image")
+    public ResponseEntity<?> uploadUserImage(@PathVariable Long id, @RequestParam("profileImg") MultipartFile profileImg) throws IOException {
+        Map<String, Object> result = userService.uploadProfileImg(id, profileImg);
         return ResponseEntity.ok().body(result);
     }
 }

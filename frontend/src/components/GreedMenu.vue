@@ -24,9 +24,6 @@ export default {
         const username = route.params.id;
         const response = await api.post('/api/selectMenu', { username : username });
         menu.value = response.data.result;
-        console.log("##menu.value = ");
-        console.log(menu.value);
-        console.log("##menu.value = ");
 
       } catch (e) {
         setTimeAlert(true);

@@ -11,7 +11,8 @@ public class UserForm {
     private String username;
     private String nickname;
     private String password;
-
+    private String profileImg;
+    private Long visitCount;
     private Type type;
 
     private String city;

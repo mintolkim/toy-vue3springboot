@@ -118,4 +118,12 @@ public class UserRepository {
 
     }
 
+
+    public String uploadProfileImg(Long id, String userImg) {
+        UserForm userForm = new UserForm();
+        User user = em.find(User.class, id);
+        user.setProfileImg(userImg);
+        userForm.setProfileImg(user.getProfileImg());
+        return userImg;
+    }
 }

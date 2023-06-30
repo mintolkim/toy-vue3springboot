@@ -20,7 +20,7 @@ public class BlogController {
     private final BlogService blogService;
 
     // 블로그 정보 가져오기
-    @GetMapping("blogInfo/{id}")
+    @PostMapping("blogInfo/{id}")
     public ResponseEntity<Map<String,Object>> blogInfo(@PathVariable Long id){
         Map<String,Object> result = blogService.blogInfo(id);
         return ResponseEntity.ok().body(result);

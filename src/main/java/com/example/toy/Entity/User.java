@@ -22,6 +22,10 @@ public class User {
 
     private String password;
 
+    private String profileImg = "user.png";
+
+    private Long visitCount = 0L;
+
     @Enumerated(EnumType.STRING)
     private Type type;
 
