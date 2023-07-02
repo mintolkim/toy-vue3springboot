@@ -104,7 +104,6 @@
       </div>
     </div>
   </div>
-  <router-link to="/blog">blog</router-link><br>
 </template>
 
 <script>

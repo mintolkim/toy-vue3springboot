@@ -21,7 +21,7 @@ public class BlogService {
     private final BlogRepository blogRepository;
 
     // 블로그 정보
-    public Map<String, Object> blogInfo(Long id) {
+    public Map<String, Object> blogInfo(String id) {
         return serviceUtilMethod(
             () -> blogRepository.blogInfo(id),
             "블로그 조회에 성공하였습니다.",

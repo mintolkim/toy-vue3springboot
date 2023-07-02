@@ -8,7 +8,14 @@
             </h2>
             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
-                    요기다가 list
+                    <table class="table">
+                      <tbody>
+                      <tr v-for="(listObject) in list" :key="listObject.id">
+                        <td class="text-start"><a href="javascript:void(0)" @click="clickEvent(listObject.id)">{{listObject.subject}}</a></td>
+                        <td class="text-end" style="color: gray">{{ new dayjs(listObject.writeDate).format('YYYY.MM.DD') }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -17,13 +24,13 @@
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <h5 class="mb-3 card-title text-start">제목</h5>
-                    <h6 class="mb-4 card-subtitle text-muted text-start">
-                        게시 날짜
+                    <h5 class="mb-3 card-title text-start">{{ subject }}</h5>
+                    <h6 class="mb-4 card-subtitle text-muted text-end" style="color: gray; font-size: 11px;">
+                      {{ writeDate }}
                     </h6>
                 </li>
-                <li class="p-4 list-group-item">
-                    콘텐츠
+                <li class="p-4 list-group-item text-start">
+                  {{content}}
                 </li>
                 <li class="mb-0 list-group-item">
                     <nav aria-label="Page navigation example">
@@ -48,8 +55,45 @@
 </template>
 
 <script>
-export default {
+import {onMounted, reactive, ref, toRefs} from "vue";
+import {useRoute} from "vue-router";
+import api from "@/axios";
+import dayjs from "dayjs";
 
+export default {
+  methods: {dayjs},
+  setup(){
+    const listPost = reactive({
+      menuId : null,
+      userId : null
+    });
+    const route = useRoute();
+    const username = route.params.id;
+    const list = ref(null);
+    const content = ref('');
+    const subject = ref('');
+    const writeDate = ref('');
+    onMounted(async () => {
+      const responseMenu = await api.post('/api/selectMenu', { username : username });
+      listPost.menuId = responseMenu.data.result[0].id;
+
+      const responseUser = await api.post('api/userInfo/'+username)
+      listPost.userId = responseUser.data.result;
+
+      const responseList = await api.post('/api/post/postList/'+ 0, listPost);
+      list.value = responseList.data.result;
+    })
+
+    const clickEvent = async (id) => {
+      const response = await api.post('/api/post/'+ id);
+      subject.value = response.data.result.subject;
+      content.value = response.data.result.content;
+      writeDate.value = dayjs(response.data.result.writeDate).format('YYYY.MM.DD hh:mm:ss');
+    }
+    return{
+      ...toRefs(listPost), list, clickEvent,subject, content, writeDate
+    }
+  }
 }
 </script>
 

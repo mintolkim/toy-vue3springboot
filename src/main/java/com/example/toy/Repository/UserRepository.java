@@ -3,6 +3,7 @@ package com.example.toy.Repository;
 import com.example.toy.Entity.Address;
 import com.example.toy.Entity.Menu;
 import com.example.toy.Entity.User;
+import com.example.toy.RequestForm.PostForm;
 import com.example.toy.RequestForm.UserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -125,5 +126,19 @@ public class UserRepository {
         user.setProfileImg(userImg);
         userForm.setProfileImg(user.getProfileImg());
         return userImg;
+    }
+
+    // 사용자 찾는 jpql
+    public Long findUserJpql(String username) {
+        if (username == null) {
+            throw new IllegalArgumentException("userForm is null");
+        }
+
+        String jpql = "select u from User u where username =: username";
+        List<User> user = em.createQuery(jpql, User.class)
+                .setParameter("username", username)
+                .getResultList();
+
+        return user.get(0).getId();
     }
 }

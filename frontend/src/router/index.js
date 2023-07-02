@@ -1,5 +1,4 @@
 import {createRouter, createWebHistory} from "vue-router";
-import post from "@/components/PostTEST.vue"
 import home from "@/components/blogHome.vue"
 import blogMain from "@/components/blogMain.vue";
 import signIn from "@/components/SignIn.vue";
@@ -17,11 +16,6 @@ const router = createRouter({
             path : '/blog',
             name : 'blog',
             component : blogMain
-        },
-        {
-            path : '/post',
-            name : 'post',
-            component : post
         },
         {
             path : '/signin',

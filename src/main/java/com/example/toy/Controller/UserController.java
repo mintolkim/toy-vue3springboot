@@ -53,4 +53,11 @@ public class UserController {
         Map<String, Object> result = userService.uploadProfileImg(id, profileImg);
         return ResponseEntity.ok().body(result);
     }
+
+    // 유저 아이디 정보 가져오기
+    @PostMapping("/userInfo/{username}")
+    public ResponseEntity<?> userInfo(@PathVariable String username){
+        Map<String, Object> result = userService.findUserJpql(username);
+        return ResponseEntity.ok().body(result);
+    }
 }

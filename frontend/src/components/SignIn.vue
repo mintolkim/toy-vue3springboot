@@ -58,9 +58,6 @@ export default {
             }
             setTimeAlert(true);
             setMessage(response.data.result.username + " 님 환영합니다.");
-            console.log("###############")
-            console.log(response.data);
-            console.log("###############")
             store.commit('setUser',{id : response.data.result.id ,username : response.data.result.username, nickname: response.data.result.nickname});
 
           })

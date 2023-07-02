@@ -79,4 +79,13 @@ public class UserService {
                 "유저 프로필 사진 등록에 실패했습니다."
         );
     }
+
+    // jpql 로 사용자 찾기
+    public Map<String, Object> findUserJpql(String username) {
+        return serviceUtilMethod(
+                () -> userRepository.findUserJpql(username),
+                "유저 아이디를 성공적으로 가져왔습니다.",
+                "유저 아이디 조회를 실패했습니다."
+        );
+    }
 }

@@ -23,6 +23,8 @@ public class PostForm {
 
     private Long userId;
 
+    private String username;
+
     public PostForm() {
     }
 }

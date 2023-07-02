@@ -75,7 +75,7 @@ public class PostRepository {
         User user = findUser(reqPostForm);
         int pageSize = 10; // 한 페이지당 데이터 수
 
-        String jpql = "select p from Post p where p.user.id = :userId";
+        String jpql = "select p from Post p where p.user.id = :userId order by p.date.writeDate desc";
         List<Post> postList = em.createQuery(jpql, Post.class)
                 .setParameter("userId", user.getId())
                 .setFirstResult(pageSize * pageNo)
@@ -89,6 +89,8 @@ public class PostRepository {
             postForm.setId(post.getId());
             postForm.setSubject(post.getSubject());
             postForm.setContent(post.getContent());
+            postForm.setUserId(post.getUser().getId());
+            postForm.setUsername(post.getUser().getUsername());
 
             if (post.getDate() != null || post.getMenu() != null) {
                 postForm.setWriteDate(post.getDate().getWriteDate());
@@ -126,6 +128,7 @@ public class PostRepository {
         postForm.setUpdateDate(post.getDate().getUpdateDate());
         postForm.setMenuId(post.getMenu().getId());
         postForm.setUserId(post.getUser().getId());
+        postForm.setUsername(post.getUser().getUsername());
 
         return postForm;
     }
