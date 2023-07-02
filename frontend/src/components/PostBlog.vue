@@ -49,7 +49,7 @@
                             </button>
                           </h2>
                           <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                            <div class="accordion-body" v-if="commentList?.length > 0 || commentList !== null">
+                            <div class="accordion-body" v-if="commentList?.length > 0">
                               <table class="table table-borderless" v-for="(commentObject) in commentList" :key="commentObject.id">
                                 <thead>
                                 <tr>
