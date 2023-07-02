@@ -10,7 +10,7 @@
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item justify-content-end">
-                  <select class="form-select w-25" v-model="selectedMenu">
+                  <select class="form-select w-25" v-model="selectedMenu" style="font-size: 11px">
                     <option
                         v-for="(menuObject) in menu"
                         :key="menuObject.id"
@@ -34,9 +34,6 @@
                 <li class="mb-0 list-group-item">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-end">
-                          <li>
-                            <button type="button" class="btn btn-outline-danger">삭제</button>
-                          </li>
                           <li>
                             &nbsp;
                             <button type="button" class="btn btn-outline-primary">

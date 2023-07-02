@@ -19,9 +19,11 @@ public class CommentForm {
 
     private LocalDateTime writeDate;
 
-    private Long post_id;
+    private Long postId;
 
-    private Long user_id;
+    private Long userId;
 
-    private String content;
+    private String nickname;
+
+    private String comment;
 }
