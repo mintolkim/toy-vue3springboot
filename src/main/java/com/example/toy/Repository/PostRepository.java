@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -142,4 +143,25 @@ public class PostRepository {
         Post post = em.find(Post.class ,postForm.getId());
         return post;
     }
+
+    // 글 갯수
+    public int getPostCnt(Long userId, Long menuId) {
+        String queryStr = "select count(p) from Post p where p.user.id =: userId ";
+
+        if (menuId != null) {
+            queryStr += "and p.menu.id =: menuId";
+        }
+
+        Query query = em.createQuery(queryStr);
+        query.setParameter("userId", userId);
+
+        if (menuId != null) {
+            query.setParameter("menuId", menuId);
+        }
+
+        Long postCount = (Long) query.getSingleResult();
+        return postCount.intValue();
+    }
+
+
 }

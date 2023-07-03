@@ -11,7 +11,7 @@
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingTwo">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              글 목록 보기
+              글 목록 보기 ({{postCnt}})
             </button>
           </h2>
           <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
@@ -24,6 +24,23 @@
                 </tr>
                 </tbody>
               </table>
+              <nav aria-label="Page navigation example" v-if="postCnt > 10 ">
+                <ul class="pagination justify-content-center">
+                  <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                  <li class="page-item" v-for="pageNumber in pageNation" :key="pageNumber">
+                    <a class="page-link" @click="getPostList(pageNumber)">{{ pageNumber + 1 }}</a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div v-else>
+              </div>
             </div>
           </div>
         </div>
@@ -125,60 +142,99 @@ import {alertEvent} from "@/composables/alertEvent";
 
 export default {
   methods: {dayjs},
-  setup(){
+  props: {
+    postCnt: {
+      type: Number,
+      required: true
+    }
+  },
+  setup(props){
+    // 포스트 목록
     const listPost = reactive({
       menuId : null,
       userId : null
     });
+
+    // 댓글 정보
     const comment = reactive({
       postId: null,
       userId: null,
       comment: ''
     });
+
+    // 댓글 리스트
     const commentData = reactive({
-      list: [],
-      count: 0,
+      list: []
     });
+
     const route = useRoute();
     const store = useStore();
-    const username = route.params.id;
     const list = ref(null);
     const content = ref('');
     const subject = ref('');
     const writeDate = ref('');
     const noPost = ref(true);
-    const nickname = computed(() => {
-      if (store.state?.user?.nickname != undefined) {
-        return store.state.user.nickname;
-      }
-      return "noname";
-    });
+    const applyPost = ref(null);
+    const username = route.params.id;
+    const {setTimeAlert, setMessage} = alertEvent(store);
+    const pageCntVal = ref(props.postCnt);
+    const pageNation = computed(() => pageEvent());
+
+    // 댓글 감지 ( 리스트, 갯수 )
     const commentList = computed(() => commentData.list);
     const commentCnt = computed(() => commentData.list.length);
 
-    const applyPost = ref(null);
-    const {setTimeAlert, setMessage} = alertEvent(store);
-
     onMounted(async () => {
+      // 메뉴 정보 가져오기
+      // TODO: 부모 blogMain 으로 옮기기
       const responseMenu = await api.post('/api/selectMenu', { username : username });
       listPost.menuId = responseMenu.data.result[0].id;
 
+      // 유저 정보
+      // TODO: 부모 blogMain 으로 옮기기
       const responseUser = await api.post('api/userInfo/'+username)
       listPost.userId = responseUser.data.result;
 
-      const responseList = await api.post('/api/post/postList/'+ 0, listPost);
+      // 포스트 리스트
+      await getPostList(0);
+
+    });
+
+    // 포스트리스트
+    const getPostList = async(postId) => {
+      const responseList = await api.post('/api/post/postList/'+ postId, listPost);
       list.value = responseList.data.result;
       if (list.value.length > 0){
         noPost.value = false;
         await postInfo(responseList.data.result[0].id);
       }
+    }
 
+    // 닉네임 감지
+    const nickname = computed(() => {
+      if (store.state?.user?.nickname != undefined) {
+        return store.state.user.nickname;
+      }
+      return "로그인을 해주세요.";
     });
 
+    // 포스트 페이지 네이션 클릭 이벤트
     const clickEvent = async (id) => {
       await postInfo(id);
     }
 
+    // 페이지네이션
+    const pageEvent = () => {
+      const totalPages = Math.ceil(pageCntVal.value + 10 / 10);
+      const pages = [];
+      for (let i = 0; i <= totalPages; i++) {
+        pages.push(i);
+      }
+      return pages;
+    };
+
+
+    // 포스트 읽어오기
     const postInfo = async (id) => {
       try {
         const response = await api.post('/api/post/'+ id);
@@ -193,17 +249,17 @@ export default {
       }
     }
 
+    // 댓글 정보 가져오기
     const commentInfo = async () => {
-      // 댓글 정보 가져오기
       commentData.list = []
       const responseComment = await api.post('/api/comment/' + applyPost.value)
       if(responseComment.data.result.length > 0){
         commentData.list = responseComment.data.result;
         commentCnt.value = commentList.value.length;
-        console.log(commentList)
       }
     }
 
+    // 코멘트 등록하기
     const commentEvent = async () => {
       if (store.state?.user === null || applyPost.value === null) {
         setTimeAlert(true);
@@ -228,7 +284,8 @@ export default {
     return{
       ...toRefs(listPost), ...toRefs(comment),...toRefs(commentData),
       list, clickEvent,subject, content, writeDate, noPost, postInfo, commentEvent,
-      nickname, setTimeAlert, setMessage, commentList, commentInfo, commentCnt
+      nickname, setTimeAlert, setMessage, commentList, commentInfo, commentCnt, pageNation,
+      username, getPostList
     }
   }
 }

@@ -98,6 +98,7 @@ export default {
         postData.menuId = selectedMenu.value;
         await api.post('/api/post/write', postData);
         emit('movePost');
+        emit('postCnt');
 
       } else {
         setTimeAlert(true);

@@ -63,4 +63,13 @@ public class PostService {
             "글 조회에 실패하였습니다."
         );
     }
+
+    // 글 갯수
+    public Map<String, Object> getPostCnt(Long userId, Long menuId) {
+        return serviceUtilMethod(
+                () -> postRepository.getPostCnt(userId, menuId),
+                "글 조회가 완료되었습니다.",
+                "글 조회에 실패하였습니다."
+        );
+    }
 }

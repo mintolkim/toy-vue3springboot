@@ -50,6 +50,14 @@ public class PostController {
         return ResponseEntity.ok().body(result);
     }
 
+    // 글 갯수
+    @PostMapping("postCnt/{userId}")
+    public ResponseEntity<Map<String, Object>> getPostCnt(@PathVariable Long userId, @RequestParam(required = false) Long menuId){
+        Map<String, Object> result = postService.getPostCnt(userId, menuId);
+        return ResponseEntity.ok().body(result);
+    }
+
+
     // TODO : 글 상세보기 restapi 사용
     @PostMapping("{postId}")
     public ResponseEntity<Map<String, Object>> viewPost(@PathVariable Long postId){

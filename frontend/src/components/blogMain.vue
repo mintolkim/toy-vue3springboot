@@ -13,8 +13,8 @@
         <div class="my-5 row row-cols-2 mt-20">
             <div class="col-3"><UserProfile :username="username"/></div>
             <div class="col-9 text-center">
-              <WriteBlog v-if="write" @movePost="movePost"/>
-              <PostBlog v-else/>
+              <WriteBlog v-if="write" @movePost="movePost" @postCnt="getPostCount"/>
+              <PostBlog v-else  :postCnt="postCnt"/>
               <div class="text-end">
                 <button type="button" class="btn btn-outline-primary" @click="clickEvent" v-if="username === visitUserStatus && !write">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -33,11 +33,12 @@
 
 import PostBlog from "@/components/PostBlog.vue";
 import UserProfile from "@/components/UserProfile.vue";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {alertEvent} from "@/composables/alertEvent";
 import {useStore} from "vuex";
 import WriteBlog from "@/components/WriteBlog.vue";
+import api from "@/axios";
 
 export default {
     components: {
@@ -52,6 +53,17 @@ export default {
       const write = ref(false);
       const username = route.params.id;
       const visitUserStatus = computed(() => store.state?.user?.username);
+      const postCnt = ref(0);
+      const userData = ref(null);
+
+      // 유저정보 가져오기
+      onMounted(async () => {
+        // 유저 정보
+        const responseUser = await api.post('api/userInfo/'+username);
+        userData.value = responseUser.data.result;
+        // 포스트 갯수 가져오기
+        await getPostCount();
+      });
 
       const movePost = () => {
         write.value = false;
@@ -60,9 +72,18 @@ export default {
         write.value = true;
       }
 
+      const getPostCount = (async () => {
+        let url = 'api/post/postCnt/' +  userData.value;
+        /*if (data.menuId != null) {
+          url += '?menuId=' + data.menuId;
+        }*/
+        const responsePostCnt = await api.post(url);
+        postCnt.value = responsePostCnt.data.result;
+      });
+
 
       return{
-        clickEvent, setMessage, setTimeAlert, username, write, visitUserStatus, movePost
+        clickEvent, setMessage, setTimeAlert, username, write, visitUserStatus, movePost, getPostCount, postCnt, userData
       }
   }
 }
