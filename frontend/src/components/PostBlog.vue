@@ -156,12 +156,6 @@ import {alertEvent} from "@/composables/alertEvent";
 
 export default {
   methods: {dayjs},
-/*  props: {
-    postCnt: {
-      type: Number,
-      required: true
-    }
-  },*/
   setup(props, {emit}){
     // 포스트 목록
     const listPost = reactive({
@@ -244,8 +238,12 @@ export default {
     // 글 페이지 네이션
     const getPostListOffSet = async (pageIndex) =>{
       const responseList = await api.post('/api/post/postList/'+ pageIndex, listPost);
-      await postInfo(responseList.data.result[0].id);
-      list.value = responseList.data.result;
+      if (responseList.data.result.length > 0) {
+        await postInfo(responseList.data.result[0].id);
+        list.value = responseList.data.result;
+      }
+
+
     }
 
     // 포스트리스트
@@ -253,14 +251,10 @@ export default {
       firstPageInfo.value = postId;
       const responseList = await api.post('/api/post/postList/'+ postId, listPost);
       pageList.value = responseList.data.result;
-      console.log(postId)
-      console.log(responseList);
-      console.log(pageList.value);
-      if (pageList.value.length > 0){
+      if (responseList.data.result.length > 0){
         noPost.value = false;
-
       } else{
-        noPost.value = true;
+      noPost.value = true;
       }
     }
 
@@ -282,7 +276,6 @@ export default {
 
     // 포스트 페이지 네이션 클릭 이벤트
     const clickEvent = async (id, index) => {
-      console.log(index);
       if (index !== null && index !== '' && index !== undefined) {
         postIndex.value = index;
         isActive.value = '';
@@ -293,6 +286,7 @@ export default {
       await postInfo(id);
     }
 
+    // 페이지 나누기 (글목록)
     const pageEvent = () => {
       const totalPages = Math.ceil(postCnt.value / 10);
       // 마지막 페이지
@@ -309,8 +303,6 @@ export default {
       }
       return pages;
     };
-
-
 
     // 포스트 읽어오기
     const postInfo = async (id) => {
@@ -333,7 +325,7 @@ export default {
       const responseComment = await api.post('/api/comment/' + applyPost.value)
       if(responseComment.data.result.length > 0){
         commentData.list = responseComment.data.result;
-        commentCnt.value = commentList.value.length;
+        commentCnt.value = responseComment.data.result.length;
       }
     }
 
@@ -347,9 +339,9 @@ export default {
           comment.userId = store.state?.user?.id;
           comment.postId = applyPost.value;
           const response = await api.post('/api/comment/write', comment);
-          console.log(response);
           if (response.data.status == "200"){
             await commentInfo();
+            comment.comment = '';
           } else {
             console.error("Error posting comment: ", response.data.message);
           }
@@ -366,9 +358,13 @@ export default {
 
     // 포스트 삭제
     const deletePost = async (id) => {
-      const response = await api.post('/api/post/delete/' + id);
+      console.log(id);
+      const response = await api.post('/api/post/delete/' + id );
       if(response.data.status === '200'){
+        console.log('삭제');
+        console.log(response.data);
         await getPostList(0);
+        await getPostListOffSet(0);
         await getPostCount();
       }
     }

@@ -55,10 +55,7 @@ public class CommentRepository {
     // 댓글 삭제
     public String deleteComment(CommentForm commentForm) {
         Comment comment = em.find(Comment.class, commentForm.getId());
-        String jpql = "delete from Comment c where id =: id";
-        em.createQuery(jpql)
-                .setParameter("id", comment.getId())
-                .executeUpdate();
+        em.remove(comment);
         em.clear();
         return commentForm.getComment();
     }

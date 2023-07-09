@@ -37,12 +37,6 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-end">
                           <li>
-                            &nbsp;
-                            <button type="button" class="btn btn-outline-primary">
-                              임시 저장
-                            </button>
-                          </li>
-                          <li>
                             <button type="button" class="btn btn-outline-primary" @click="submitEvent">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
@@ -91,39 +85,23 @@ export default {
     const username = route.params.id;
     const visitUserStatus = computed(() => store.state?.user?.username);
     const postData = reactive({
+      id: '',
       subject: '',
       content: '',
       menuId: '',
       userId: '',
-      updateDate: ''
+      updateDate: '',
+      writeDate: '',
     });
     const updateBooleanRef = ref(props.updateBoolean);
     const postIdRef = ref(props.postId);
-    // const postDataRefs = toRefs(postData);
-
-    // 수정 그려주기
-    const drawUpdate = async () => {
-      const response = await api.post('/api/post/'+ postIdRef.value);
-      postData.subject = response.data.subject;
-      postData.content = response.data.content;
-      selectedMenu.value = response.data.menuId;
-      console.log(postData.subject);
-      console.log(postData.content);
-      console.log(selectedMenu.value);
-    }
-
-/*    watchEffect(async () => {
-      // 수정 / 글쓰기 구분
-      if(updateBooleanRef.value){
-        console.log('efef')
-      }
-    });*/
 
     onMounted(async () => {
       try {
         const response = await api.post('/api/selectMenu', { username : username });
         menu.value = response.data.result;
         selectedMenu.value = menu.value[0].id;
+        console.log(updateBooleanRef.value)
         if(updateBooleanRef.value){
           await drawUpdate();
         }
@@ -133,14 +111,27 @@ export default {
       }
     });
 
+    // 수정 그려주기
+    const drawUpdate = async () => {
+      const response = await api.post('/api/post/'+ postIdRef.value);
+      postData.id = response.data.result.id;
+      postData.subject = response.data.result.subject;
+      postData.content = response.data.result.content;
+      postData.menuId = response.data.result.menuId;
+      postData.userId = response.data.result.userId;
+      postData.writeDate = response.data.result.writeDate;
+
+      selectedMenu.value = response.data.result.menuId;
+    }
+
     // 글 등록 이벤트
     const submitEvent = async () => {
       if (typeof username === 'string' && visitUserStatus.value === username) {
         if(updateBooleanRef.value){
+          console.log("수정")
+
           // 수정
-          postData.userId = store.state?.user?.id;
-          postData.menuId = selectedMenu.value;
-          const response = await api.post('/api/update', postData);
+          const response = await api.post('/api/post/update', postData);
           console.log(response);
           emit('movePost');
           emit('postCnt');
