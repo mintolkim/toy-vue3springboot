@@ -37,9 +37,9 @@ public class PostService {
     }
 
     // 글 삭제
-    public Map<String, Object> deletePost(PostForm postForm) {
+    public Map<String, Object> deletePost(Long postId) {
         return serviceUtilMethod(
-            () -> postRepository.deletePost(postForm),
+            () -> postRepository.deletePost(postId),
             "글 삭제가 완료되었습니다.",
             "글 삭제에 실패하였습니다."
         );

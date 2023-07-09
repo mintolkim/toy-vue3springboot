@@ -61,14 +61,13 @@ public class PostRepository {
     }
 
     // 글 삭제
-    public String deletePost(PostForm postForm) {
-        Post post = findPost(postForm);
+    public String deletePost(Long postId) {
         String jpql = "delete from Post p where p.id =: id";
         em.createQuery(jpql)
-                .setParameter("id", post.getId())
+                .setParameter("id", postId)
                 .executeUpdate();
         em.clear();
-        return postForm.getSubject();
+        return "success";
     }
 
     // 글 조회

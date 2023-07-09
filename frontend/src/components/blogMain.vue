@@ -13,8 +13,9 @@
         <div class="my-5 row row-cols-2 mt-20">
             <div class="col-3"><UserProfile :username="username"/></div>
             <div class="col-9 text-center">
-              <WriteBlog v-if="write" @movePost="movePost" @postCnt="getPostCount"/>
-              <PostBlog v-else  :postCnt="postCnt"/>
+              <WriteBlog v-if="write" @movePost="movePost" :postId="postId" :updateBoolean="updateBoolean"/>
+              <!--@postCnt="getPostCount"-->
+              <PostBlog v-else  :postCnt="postCnt" @updatePost="updatePost"/>
               <div class="text-end">
                 <button type="button" class="btn btn-outline-primary" @click="clickEvent" v-if="username === visitUserStatus && !write">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -55,6 +56,9 @@ export default {
       const visitUserStatus = computed(() => store.state?.user?.username);
       const postCnt = ref(0);
       const userData = ref(null);
+      //const updatePostData = ref('');
+      const updateBoolean = ref(false);
+      const postId = ref(null);
 
       // 유저정보 가져오기
       onMounted(async () => {
@@ -62,28 +66,44 @@ export default {
         const responseUser = await api.post('api/userInfo/'+username);
         userData.value = responseUser.data.result;
         // 포스트 갯수 가져오기
-        await getPostCount();
+        // await getPostCount();
       });
 
+      // 포스트 글
       const movePost = () => {
         write.value = false;
       }
+
+      // 글 쓰기 화면
       const clickEvent = () => {
         write.value = true;
+        updateBoolean.value = false;
+        postId.value = null;
       }
 
+      // 수정 값
+      const updatePost = (data) => {
+        write.value = true;
+        updateBoolean.value = data.updateBoolean;
+        postId.value = data.postId;
+        // updatePostData.value = {...data};
+        // console.log(data)
+      }
+
+/*      // 포스트 갯수
       const getPostCount = (async () => {
         let url = 'api/post/postCnt/' +  userData.value;
-        /*if (data.menuId != null) {
+        /!*if (data.menuId != null) {
           url += '?menuId=' + data.menuId;
-        }*/
+        }*!/
         const responsePostCnt = await api.post(url);
         postCnt.value = responsePostCnt.data.result;
-      });
-
+      });*/
 
       return{
-        clickEvent, setMessage, setTimeAlert, username, write, visitUserStatus, movePost, getPostCount, postCnt, userData
+        clickEvent, setMessage, setTimeAlert, username, write, visitUserStatus, movePost,
+        //getPostCount,
+        postCnt, userData, updatePost, updateBoolean, postId
       }
   }
 }

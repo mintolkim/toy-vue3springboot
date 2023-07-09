@@ -1,5 +1,5 @@
 <template>
-    <div v-if="noPost">
+    <div v-if="noPostEvent">
       <div class="mb-3 p-4 card">
         <div class="card-body text-center">
           작성된 글이 없습니다.
@@ -18,22 +18,28 @@
             <div class="accordion-body">
               <table class="table table-hover">
                 <tbody>
-                <tr v-for="(listObject) in list" :key="listObject.id">
-                  <td class="text-start"><a href="javascript:void(0)" @click="clickEvent(listObject.id)">{{listObject.subject}}</a></td>
+                <tr v-for="(listObject) in pageList" :key="listObject.id">
+                  <td :class="{ 'text-start': true, 'active': isActive === listObject.id }">
+                    <a href="javascript:void(0)" @click="clickEvent(listObject.id)">{{ listObject.subject }}</a>
+                  </td>
                   <td class="text-end" style="color: gray">{{ new dayjs(listObject.writeDate).format('YYYY.MM.DD') }}</td>
                 </tr>
                 </tbody>
               </table>
               <nav aria-label="Page navigation example" v-if="postCnt > 10 ">
                 <ul class="pagination justify-content-center">
-                  <a class="page-link" href="#" aria-label="Previous">
+                  <a class="page-link" href="#" aria-label="Previous" v-if="firstPageInfo !== 0"
+                  @click="getPostList(--firstPageInfo)">
                     <span aria-hidden="true">&laquo;</span>
                   </a>
                   <li class="page-item" v-for="pageNumber in pageNation" :key="pageNumber">
-                    <a class="page-link" @click="getPostList(pageNumber)">{{ pageNumber + 1 }}</a>
+                    <a class="page-link" :class="{ 'active': firstPageInfo === pageNumber }" @click="getPostList(pageNumber)">
+                      {{ pageNumber + 1 }}
+                    </a>
                   </li>
                   <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
+                    <a class="page-link" href="#" aria-label="Next" v-if="lastPageInfo !== firstPageInfo + 1"
+                    @click="getPostList(++firstPageInfo)">
                       <span aria-hidden="true">&raquo;</span>
                     </a>
                   </li>
@@ -47,6 +53,14 @@
       </div>
       <div class="mb-3 card">
           <div class="card-body">
+            <div class="text-end" v-if="username === getLoginId">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16" style="padding-right: 4px" @click="updatePost(applyPost)">
+                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16" @click="deletePost(applyPost)">
+                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+              </svg>
+            </div>
               <ul class="list-group list-group-flush">
                   <li class="list-group-item">
                       <h5 class="mb-3 card-title text-start">{{ subject }}</h5>
@@ -114,17 +128,17 @@
               </ul>
           </div>
       </div>
-      <nav aria-label="Page navigation example">
+      <nav aria-label="Page navigation example" v-if="pageBoolean">
         <ul class="pagination justify-content-center">
-          <a class="page-link" href="#" aria-label="Previous">
+          <a class="page-link" href="#" aria-label="Previous" v-if="pageIndex > 0" @click="getPostListOffSet(--pageIndex)">
             <span aria-hidden="true">&laquo;</span>
           </a>
-          <li class="page-item" v-for="(listObject, index) in list" :key="listObject.id">
-            <a class="page-link" @click="clickEvent(listObject.id)">{{ index + 1}}</a>
+          <li class="page-item" v-for="(listObject, index) in list" :key="listObject.id" :class="{ 'active': postIndex === index }">
+            <a class="page-link" @click="clickEvent(listObject.id, index)">{{ index + 1 + (pageIndex * 10)}}</a>
           </li>
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
-              <span aria-hidden="true">&raquo;</span>
+            <a class="page-link" href="#" aria-label="Next" v-if="pageIndex + 1 !== lastPageInfo" @click="getPostListOffSet(++pageIndex)">
+              <span aria-hidden="true" >&raquo;</span>
             </a>
           </li>
         </ul>
@@ -142,13 +156,13 @@ import {alertEvent} from "@/composables/alertEvent";
 
 export default {
   methods: {dayjs},
-  props: {
+/*  props: {
     postCnt: {
       type: Number,
       required: true
     }
-  },
-  setup(props){
+  },*/
+  setup(props, {emit}){
     // 포스트 목록
     const listPost = reactive({
       menuId : null,
@@ -170,6 +184,7 @@ export default {
     const route = useRoute();
     const store = useStore();
     const list = ref(null);
+    const pageList = ref(null);
     const content = ref('');
     const subject = ref('');
     const writeDate = ref('');
@@ -177,12 +192,17 @@ export default {
     const applyPost = ref(null);
     const username = route.params.id;
     const {setTimeAlert, setMessage} = alertEvent(store);
-    const pageCntVal = ref(props.postCnt);
     const pageNation = computed(() => pageEvent());
-
     // 댓글 감지 ( 리스트, 갯수 )
     const commentList = computed(() => commentData.list);
     const commentCnt = computed(() => commentData.list.length);
+    const postCnt = ref(0);
+    const firstPageInfo = ref(0);
+    const lastPageInfo = ref(0);
+    const isActive = ref(null);
+    const pageIndex = ref(0);
+    const postIndex = ref(0);
+    const pageBoolean = ref(true);
 
     onMounted(async () => {
       // 메뉴 정보 가져오기
@@ -198,15 +218,49 @@ export default {
       // 포스트 리스트
       await getPostList(0);
 
+      // 글 리스
+      await getPostListOffSet(0);
+
+      // 포스트 갯수
+      await getPostCount();
+
     });
+
+    // 포스트 갯수
+    const getPostCount = (async () => {
+      let url = 'api/post/postCnt/' +  listPost.userId;
+      /*if (data.menuId != null) {
+        url += '?menuId=' + data.menuId;
+      }*/
+      const responsePostCnt = await api.post(url);
+      postCnt.value = responsePostCnt.data.result;
+    });
+
+    // 글 갯수 감지 이벤트
+    const noPostEvent =(computed(()=>{
+      return noPost.value;
+    }))
+
+    // 글 페이지 네이션
+    const getPostListOffSet = async (pageIndex) =>{
+      const responseList = await api.post('/api/post/postList/'+ pageIndex, listPost);
+      await postInfo(responseList.data.result[0].id);
+      list.value = responseList.data.result;
+    }
 
     // 포스트리스트
     const getPostList = async(postId) => {
+      firstPageInfo.value = postId;
       const responseList = await api.post('/api/post/postList/'+ postId, listPost);
-      list.value = responseList.data.result;
-      if (list.value.length > 0){
+      pageList.value = responseList.data.result;
+      console.log(postId)
+      console.log(responseList);
+      console.log(pageList.value);
+      if (pageList.value.length > 0){
         noPost.value = false;
-        await postInfo(responseList.data.result[0].id);
+
+      } else{
+        noPost.value = true;
       }
     }
 
@@ -218,20 +272,44 @@ export default {
       return "로그인을 해주세요.";
     });
 
+    // 아이디 감지
+    const getLoginId = computed(()=> {
+      if (store.state?.user?.username != undefined) {
+        return store.state.user.username;
+      }
+      return null;
+    })
+
     // 포스트 페이지 네이션 클릭 이벤트
-    const clickEvent = async (id) => {
+    const clickEvent = async (id, index) => {
+      console.log(index);
+      if (index !== null && index !== '' && index !== undefined) {
+        postIndex.value = index;
+        isActive.value = '';
+      } else {
+        pageBoolean.value = false;
+        isActive.value = id;
+      }
       await postInfo(id);
     }
 
-    // 페이지네이션
     const pageEvent = () => {
-      const totalPages = Math.ceil(pageCntVal.value + 10 / 10);
+      const totalPages = Math.ceil(postCnt.value / 10);
+      // 마지막 페이지
+      lastPageInfo.value = totalPages;
+      const currentPage = firstPageInfo.value + 1;
+      const pageRange = 10; // 페이지 번호의 개수
+
+      const startPage = Math.max(currentPage - Math.floor(pageRange / 2), 0);
+      const endPage = Math.min(startPage + pageRange - 1, totalPages - 1);
+
       const pages = [];
-      for (let i = 0; i <= totalPages; i++) {
+      for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
       return pages;
     };
+
 
 
     // 포스트 읽어오기
@@ -281,15 +359,37 @@ export default {
       }
     }
 
+    // 포스트 수정
+    const updatePost = async (id) => {
+      emit('updatePost', {updateBoolean: true, postId : id});
+    }
+
+    // 포스트 삭제
+    const deletePost = async (id) => {
+      const response = await api.post('/api/post/delete/' + id);
+      if(response.data.status === '200'){
+        await getPostList(0);
+        await getPostCount();
+      }
+    }
+
     return{
       ...toRefs(listPost), ...toRefs(comment),...toRefs(commentData),
       list, clickEvent,subject, content, writeDate, noPost, postInfo, commentEvent,
       nickname, setTimeAlert, setMessage, commentList, commentInfo, commentCnt, pageNation,
-      username, getPostList
+      username, getPostList , updatePost, deletePost, getLoginId, applyPost, noPostEvent, postCnt, getPostCount,
+      firstPageInfo, lastPageInfo, isActive, pageIndex, getPostListOffSet, postIndex, pageBoolean, pageList
     }
   }
 }
 </script>
 
 <style>
+.page-link.active {
+  background-color: #007bff;
+  color: #fff;
+}
+.table .active {
+  font-weight: bold;
+}
 </style>

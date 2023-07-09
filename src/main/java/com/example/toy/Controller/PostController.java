@@ -37,9 +37,9 @@ public class PostController {
     }
 
     // 글 삭제
-    @PostMapping("delete")
-    public ResponseEntity<Map<String, Object>> deletePost(@RequestBody PostForm postForm){
-        Map<String, Object> result = postService.deletePost(postForm);
+    @PostMapping("delete/{postId}")
+    public ResponseEntity<Map<String, Object>> deletePost(@PathVariable Long postId){
+        Map<String, Object> result = postService.deletePost(postId);
         return ResponseEntity.ok().body(result);
     }
 
@@ -58,7 +58,7 @@ public class PostController {
     }
 
 
-    // TODO : 글 상세보기 restapi 사용
+    // 글 상세보기
     @PostMapping("{postId}")
     public ResponseEntity<Map<String, Object>> viewPost(@PathVariable Long postId){
         Map<String, Object> result = postService.viewPost(postId);
