@@ -42,6 +42,7 @@ import {useStore} from "vuex";
 import {computed, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import api from "@/axios";
+import {alertEvent} from "@/composables/alertEvent";
 export default {
     props : {
         username: {
@@ -60,6 +61,7 @@ export default {
       const profileImg = ref('');
       const nickName = ref('');
       const updateBlog = ref(false);
+      const oldNick = ref(null);
       onMounted(async () => {
         try {
           await infoBlog();
@@ -69,12 +71,12 @@ export default {
       });
 
       const store = useStore();
+      const {setTimeAlert, setMessage} = alertEvent(store);
 
       // 블로그 셋팅
       const setBlog = () => {
         console.log("블로그")
         updateBlog.value = true;
-        console.log(updateBlog.value);
       }
 
       // 블로그 정보 불러오기
@@ -82,6 +84,7 @@ export default {
         const response = await api.post('/api/blogInfo/'+blogRoute);
         profileImg.value = 'http://localhost:8081/img/'+response.data?.result?.image;
         nickName.value = response.data?.result?.nickname;
+        oldNick.value = nickName.value; // 추가된 코드
       }
 
       const uploadProfile = () => {
@@ -90,19 +93,23 @@ export default {
 
       // 닉네임 변경
       const updateNickname = async () => {
-        // 유저 정보
-        const responseUser = await api.post('api/userInfo/'+blogRoute);
-        responseUser.userId = responseUser.data.result;
-        const responseNick = await api.post('api/updateNick', {username : responseUser.userId.toString(), nickName: nickName.value});
-       // const responseNick = await api.post('api/updateNick', {username : responseUser.userId, nickname: nickName});
-        console.log(responseNick);
-        await infoBlog();
-
+          updateBlog.value = true;
+          if(oldNick.value !== nickName.value){ // 값이 변경되었는지 확인
+            // 유저 정보
+            const responseUser = await api.post('api/userInfo/'+blogRoute);
+            responseUser.userId = responseUser.data.result;
+            const response = await api.post('api/updateNick', {id : responseUser.userId, nickname: nickName.value});
+            console.log(response)
+            setTimeAlert(true);
+            setMessage(response.data.message);
+            updateBlog.value = false;
+            await infoBlog();
+          }
       }
 
       const updateStatus = computed(() => store.state?.user?.username);
       return {
-        updateStatus, blogRoute, profileImg, nickName, setBlog, updateBlog, uploadProfile, updateNickname
+        updateStatus, blogRoute, profileImg, nickName, setBlog, updateBlog, uploadProfile, updateNickname, setTimeAlert, setMessage
       }
   }
 }

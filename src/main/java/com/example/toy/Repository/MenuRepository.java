@@ -46,6 +46,7 @@ public class MenuRepository {
     }
 
     // 메뉴 수정
+    @Transactional
     public String updateMenu(MenuForm menuForm) {
         Menu menu = em.find(Menu.class, menuForm.getId());
         menu.setMenuName(menuForm.getMenuName());

@@ -143,16 +143,12 @@ public class UserRepository {
     }
 
     // 닉네임 업데이트
+    @Transactional
     public String updateNick(UserForm userForm) {
-        Long user = findUserJpql(userForm.getUsername());
-        User user1 = em.find(User.class, user);
-        System.out.println(user1.getUsername());
-        System.out.println(user1.getNickname());
-        System.out.println(user1.getId());
-        user1.setNickname(userForm.getNickname());
-        System.out.println(userForm.getNickname());
-        em.persist(user1);
+        User user = em.find(User.class, userForm.getId());
+        user.setNickname(userForm.getNickname());
+        em.persist(user);
 
-        return user1.getNickname();
+        return user.getNickname();
     }
 }

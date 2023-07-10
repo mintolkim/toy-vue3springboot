@@ -86,19 +86,7 @@ export default {
         write.value = true;
         updateBoolean.value = data.updateBoolean;
         postId.value = data.postId;
-        // updatePostData.value = {...data};
-        // console.log(data)
       }
-
-/*      // 포스트 갯수
-      const getPostCount = (async () => {
-        let url = 'api/post/postCnt/' +  userData.value;
-        /!*if (data.menuId != null) {
-          url += '?menuId=' + data.menuId;
-        }*!/
-        const responsePostCnt = await api.post(url);
-        postCnt.value = responsePostCnt.data.result;
-      });*/
 
       return{
         clickEvent, setMessage, setTimeAlert, username, write, visitUserStatus, movePost,
