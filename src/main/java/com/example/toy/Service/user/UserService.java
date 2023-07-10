@@ -88,4 +88,13 @@ public class UserService {
                 "유저 아이디 조회를 실패했습니다."
         );
     }
+
+    // 닉네임 업데이트
+    public Map<String, Object> updateNick(UserForm userForm) {
+        return serviceUtilMethod(
+                () -> userRepository.updateNick(userForm),
+                "유저 닉네임을 변경하였습니다.",
+                "유저 닉네임 변경에 실패했습니다."
+        );
+    }
 }

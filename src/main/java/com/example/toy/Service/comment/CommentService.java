@@ -34,9 +34,9 @@ public class CommentService {
     }
 
     // 댓글 삭제
-    public Map<String, Object> deleteComment(CommentForm commentForm) {
+    public Map<String, Object> deleteComment(long commentId) {
         return serviceUtilMethod(
-            () -> commentRepository.deleteComment(commentForm),
+            () -> commentRepository.deleteComment(commentId),
             "댓글이 삭제되었습니다.",
             "댓글 삭제에 실패하였습니다."
         );

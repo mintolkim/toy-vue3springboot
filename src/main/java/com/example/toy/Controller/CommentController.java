@@ -32,9 +32,9 @@ public class CommentController {
     }
 
     // 댓글 삭제
-    @PostMapping("delete")
-    public ResponseEntity<Map<String, Object>> deleteComment(@RequestBody CommentForm commentForm){
-        Map<String, Object> result = commentService.deleteComment(commentForm);
+    @PostMapping("delete/{commentId}")
+    public ResponseEntity<Map<String, Object>> deleteComment(@PathVariable long commentId){
+        Map<String, Object> result = commentService.deleteComment(commentId);
         return ResponseEntity.ok().body(result);
     }
     

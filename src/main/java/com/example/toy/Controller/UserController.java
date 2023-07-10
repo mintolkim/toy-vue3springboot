@@ -40,6 +40,13 @@ public class UserController {
         return ResponseEntity.ok().body(result);
     }
 
+    // 닉네임 변경
+    @PostMapping("updateNick")
+    public ResponseEntity<Map<String, Object>> updateNick(@RequestBody UserForm userForm) {
+        Map<String, Object> result = userService.updateNick(userForm);
+        return ResponseEntity.ok().body(result);
+    }
+
     // 회원 탈퇴
     @PostMapping("deleteUser")
     public ResponseEntity<Map<String, Object>> deleteUser(@RequestBody UserForm userForm) {

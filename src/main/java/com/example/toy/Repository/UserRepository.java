@@ -141,4 +141,18 @@ public class UserRepository {
 
         return user.get(0).getId();
     }
+
+    // 닉네임 업데이트
+    public String updateNick(UserForm userForm) {
+        Long user = findUserJpql(userForm.getUsername());
+        User user1 = em.find(User.class, user);
+        System.out.println(user1.getUsername());
+        System.out.println(user1.getNickname());
+        System.out.println(user1.getId());
+        user1.setNickname(userForm.getNickname());
+        System.out.println(userForm.getNickname());
+        em.persist(user1);
+
+        return user1.getNickname();
+    }
 }

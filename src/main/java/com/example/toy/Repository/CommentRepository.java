@@ -53,11 +53,13 @@ public class CommentRepository {
     }
 
     // 댓글 삭제
-    public String deleteComment(CommentForm commentForm) {
-        Comment comment = em.find(Comment.class, commentForm.getId());
-        em.remove(comment);
+    public String deleteComment(long id) {
+        String jpqlComment = "delete from Comment c where c.id =: id";
+        em.createQuery(jpqlComment)
+                .setParameter("id", id)
+                .executeUpdate();
         em.clear();
-        return commentForm.getComment();
+        return "댓글 삭제가 되었습니다.";
     }
 
     // 댓글 보기
@@ -71,6 +73,7 @@ public class CommentRepository {
         for (Comment comment : commentList) {
             CommentForm commentForm = new CommentForm();
             commentForm.setId(comment.getId());
+            commentForm.setUsername(comment.getUser().getUsername());
             commentForm.setPostId(comment.getPost().getId());
             commentForm.setUserId(comment.getUser().getId());
             commentForm.setNickname(comment.getUser().getNickname());
