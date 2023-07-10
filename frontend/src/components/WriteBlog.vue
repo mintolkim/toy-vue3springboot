@@ -101,7 +101,6 @@ export default {
         const response = await api.post('/api/selectMenu', { username : username });
         menu.value = response.data.result;
         selectedMenu.value = menu.value[0].id;
-        console.log(updateBooleanRef.value)
         if(updateBooleanRef.value){
           await drawUpdate();
         }
@@ -120,7 +119,6 @@ export default {
       postData.menuId = response.data.result.menuId;
       postData.userId = response.data.result.userId;
       postData.writeDate = response.data.result.writeDate;
-
       selectedMenu.value = response.data.result.menuId;
     }
 
@@ -128,20 +126,20 @@ export default {
     const submitEvent = async () => {
       if (typeof username === 'string' && visitUserStatus.value === username) {
         if(updateBooleanRef.value){
-          console.log("수정")
-
-          // 수정
           const response = await api.post('/api/post/update', postData);
-          console.log(response);
           emit('movePost');
           emit('postCnt');
+          setTimeAlert(true);
+          setMessage(response.data.message);
         } else {
           // 등록
         postData.userId = store.state?.user?.id;
         postData.menuId = selectedMenu.value;
-        await api.post('/api/post/write', postData);
+        const response = await api.post('/api/post/write', postData);
         emit('movePost');
         emit('postCnt');
+        setTimeAlert(true);
+        setMessage(response.data.message);
         }
       } else {
         setTimeAlert(true);

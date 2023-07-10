@@ -90,8 +90,11 @@
                                     </svg>
                                     {{ commentObject.nickname }}
                                   </th>
-                                  <th scope="col" class="text-end" style="font-size: 11px; color: gray">
+                                  <th scope="col" class="text-end" style="font-size: 12px; color: gray">
                                     {{ dayjs(commentObject.writeDate).format('YYYY.MM.DD hh:mm:ss') }}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16" v-if="getLoginId === commentObject.username" @click="deleteComment(commentObject)">
+                                      <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+                                    </svg>
                                   </th>
                                 </tr>
                                 </thead>
@@ -137,7 +140,7 @@
             <a class="page-link" @click="clickEvent(listObject.id, index)">{{ index + 1 + (pageIndex * 10)}}</a>
           </li>
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next" v-if="pageIndex + 1 !== lastPageInfo" @click="getPostListOffSet(++pageIndex)">
+            <a class="page-link" href="#" aria-label="Next" v-if="pageIndex + 1 !== lastPageInfo && postCnt >=10" @click="getPostListOffSet(++pageIndex)">
               <span aria-hidden="true" >&raquo;</span>
             </a>
           </li>
@@ -200,12 +203,10 @@ export default {
 
     onMounted(async () => {
       // 메뉴 정보 가져오기
-      // TODO: 부모 blogMain 으로 옮기기
       const responseMenu = await api.post('/api/selectMenu', { username : username });
       listPost.menuId = responseMenu.data.result[0].id;
 
       // 유저 정보
-      // TODO: 부모 blogMain 으로 옮기기
       const responseUser = await api.post('api/userInfo/'+username)
       listPost.userId = responseUser.data.result;
 
@@ -315,7 +316,8 @@ export default {
         comment.comment = '';
         await commentInfo();
       } catch (error) {
-        console.error("Error loading post info: ", error);
+        setTimeAlert(true);
+        setMessage("서버가 불안정합니다. 다시 접속해주세요.");
       }
     }
 
@@ -340,13 +342,17 @@ export default {
           comment.postId = applyPost.value;
           const response = await api.post('/api/comment/write', comment);
           if (response.data.status == "200"){
+            setTimeAlert(true);
+            setMessage(response.data.message);
             await commentInfo();
             comment.comment = '';
           } else {
-            console.error("Error posting comment: ", response.data.message);
+            setTimeAlert(true);
+            setMessage(response.data.message);
           }
         } catch (error) {
-          console.error("Error posting comment: ", error);
+          setTimeAlert(true);
+          setMessage("서버가 불안정합니다. 다시 접속해 주세요");
         }
       }
     }
@@ -361,12 +367,20 @@ export default {
       console.log(id);
       const response = await api.post('/api/post/delete/' + id );
       if(response.data.status === '200'){
-        console.log('삭제');
-        console.log(response.data);
+        setTimeAlert(true);
+        setMessage(response.data.message);
         await getPostList(0);
         await getPostListOffSet(0);
         await getPostCount();
       }
+    }
+
+    // 댓글 삭제
+    const deleteComment = async (comment) => {
+      const response = await api.post('/api/comment/delete/'+comment.id);
+      await commentInfo();
+      setTimeAlert(true);
+      setMessage(response.data.message);
     }
 
     return{
@@ -374,7 +388,7 @@ export default {
       list, clickEvent,subject, content, writeDate, noPost, postInfo, commentEvent,
       nickname, setTimeAlert, setMessage, commentList, commentInfo, commentCnt, pageNation,
       username, getPostList , updatePost, deletePost, getLoginId, applyPost, noPostEvent, postCnt, getPostCount,
-      firstPageInfo, lastPageInfo, isActive, pageIndex, getPostListOffSet, postIndex, pageBoolean, pageList
+      firstPageInfo, lastPageInfo, isActive, pageIndex, getPostListOffSet, postIndex, pageBoolean, pageList, deleteComment
     }
   }
 }
